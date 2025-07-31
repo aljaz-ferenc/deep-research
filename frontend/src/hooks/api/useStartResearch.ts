@@ -1,4 +1,4 @@
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import Endpoints from "@/core/Endpoints";
 import type { Query } from "@/core/Models";
 

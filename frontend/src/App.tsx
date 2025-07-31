@@ -13,6 +13,8 @@ import {
 import { Input } from "./components/ui/input";
 import { querySchema } from "./core/Models";
 import useStartResearch from "./hooks/api/useStartResearch";
+import { use } from "react";
+import { WebSocketContext } from "./provider/WebSocketProvider";
 
 const startResearchFormSchema = z.object({
 	query: querySchema,
@@ -20,6 +22,7 @@ const startResearchFormSchema = z.object({
 
 function App() {
 	const { mutateAsync: startResearch, error, isError } = useStartResearch();
+	const socket = use(WebSocketContext)
 
 	const startResearchForm = useForm<z.infer<typeof startResearchFormSchema>>({
 		resolver: zodResolver(startResearchFormSchema),
@@ -31,7 +34,9 @@ function App() {
 	const submitForm = async (
 		values: z.infer<typeof startResearchFormSchema>,
 	) => {
-		await startResearch(values.query);
+		// await startResearch(values.query);
+		if (!socket) return
+		socket.emit('query', values.query)
 	};
 
 	if (isError) {

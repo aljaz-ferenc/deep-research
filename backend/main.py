@@ -1,30 +1,26 @@
-from fastapi import FastAPI, Body, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import os
-from dotenv import load_dotenv
+import socketio
+from fastapi import FastAPI
 
-load_dotenv()
-
-origin_url = os.getenv("ORIGIN_URL")
-
-if origin_url is None:
-    raise HTTPException(status_code=500, detail="Missing ORIGIN_URL environment variable")
-
+sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins=["http://localhost:5173"])
 app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[origin_url],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
+socket_app = socketio.ASGIApp(sio, socketio_path="/ws/socket.io")
+app.mount("/ws", socket_app)
 
-class ResearchInput(BaseModel):
-    query: str
+@app.get('/api/v1/hello')
+async def hello():
+    return {'message':'hello world'}
 
-@app.post('/api/v1/research')
-async def start_research(body: ResearchInput) -> str:
-    query = body.query
-    print(f"QUERY: {query}")
-    return query
+@sio.on('connect', namespace='/ws')
+async def connect(sid, environ):
+    await sio.emit('greeting', {'message':'helooooo'}, namespace='/ws')
+    
+    print(f"Client connected to /ws namespace: {sid}")
+
+@sio.on('disconnect', namespace='/ws')
+async def disconnect(sid):
+    print(f"Client disconnected from /ws namespace: {sid}")
+
+@sio.on('query', namespace='/ws')
+async def start_research(sid, data):
+    print(data)
+
