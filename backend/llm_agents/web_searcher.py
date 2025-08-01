@@ -7,7 +7,7 @@ class SearchResult(BaseModel):
     url: str
 
 instructions = (
-    "You will receive a list of research queries. "
+    "You will receive a list of research queries with an explanation about why they were selected to be answered for a research. "
     "Each query includes: id (a unique identifier) and query (the search query string) "
     "For each query use the WebSearch tool to find one high-quality URL that best answers or explains the query."
     "Return a dictionary with query_id (the original id) and url (the most relevant and informative url) "

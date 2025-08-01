@@ -27,10 +27,7 @@ const composeProviders = (
 	});
 };
 
-const Providers = composeProviders([
-	WebSocketProvider,
-	ReactQueryProvider
-]);
+const Providers = composeProviders([WebSocketProvider, ReactQueryProvider]);
 
 export default function Provider({ children }: ProviderProps) {
 	return <Providers>{children}</Providers>;
