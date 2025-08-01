@@ -3,7 +3,7 @@ import os
 from pydantic import BaseModel
 
 # number_of_queries = os.getenv("NUM_OF_QUERIES")
-number_of_queries = 2
+number_of_queries = 1
 
 class GeneratedQuery(BaseModel):
     query: str

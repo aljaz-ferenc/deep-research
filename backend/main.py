@@ -1,4 +1,5 @@
 from turtle import up
+from llm_agents.scraper import scraper
 from llm_agents.web_searcher import web_searcher
 from models import CustomEvents, Statuses
 from llm_agents.queries_generator import GeneratedQueriesOutput, queries_generator
@@ -34,11 +35,11 @@ async def update_status(status: Statuses, sid: str):
 
 @sio.on(CustomEvents.QUERY.value, namespace='/ws')
 async def start_research(sid, query):
-    print(query)
+    # print(query)
     # run queries agent
     await update_status(Statuses.GENERATING_QUERIES, sid)
     generated_queries_result = await Runner.run(queries_generator, input=query)
-    print(generated_queries_result.final_output)
+    # print(generated_queries_result.final_output)
     output: GeneratedQueriesOutput = generated_queries_result.final_output
     queries = [q.model_dump() for q in output.queries]
     explanation = output.explanation
@@ -63,5 +64,9 @@ async def start_research(sid, query):
     urls = [q.model_dump() for q in web_search_result.final_output]
     await sio.emit(CustomEvents.URLS_GENERATED.value, {'searchResults': urls}, namespace='/ws', to=sid)
     await update_status(Statuses.SCRAPING_DATA, sid)
-    # print(urls)
+    
+    for url in urls:
+        print(url['url']) 
 
+        scrape_result = await Runner.run(scraper, input=url['url'])
+        print(scrape_result.final_output)
