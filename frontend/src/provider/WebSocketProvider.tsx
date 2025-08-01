@@ -1,7 +1,8 @@
-import { CustomEvents, Statuses } from "@/core/Models";
+import { CustomEvents, Statuses, type GeneratedQuery, type SearchResult } from "@/core/Models";
+import { useResearchState } from "@/state/research.state";
 import { createContext, type PropsWithChildren, useEffect } from "react";
 import { io, type Socket } from "socket.io-client";
-
+import { useShallow } from "zustand/react/shallow";
 export const WebSocketContext = createContext<Socket | null>(null);
 
 const socket = io("http://localhost:8000/ws", {
@@ -10,21 +11,23 @@ const socket = io("http://localhost:8000/ws", {
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {
+    const { setQueries, updateStatus, setUrlsToQueries } = useResearchState(useShallow(state => state))
+
     useEffect(() => {
         socket.on("connect", () => {
             console.log('connected to ws')
         });
 
-        socket.on('greeting', data => {
-            console.log('DATA: ', data)
+        socket.on(CustomEvents.STATUS_UPDATE, ({ status }: { status: Statuses }) => {
+            updateStatus(status)
         })
 
-        socket.on(CustomEvents.STATUS_UPDATE, (data: { status: Statuses }) => {
-            console.log('STATUS_UPDATE: ', data)
+        socket.on(CustomEvents.QUERIES_GENERATED, ({ queries }: { queries: Array<GeneratedQuery> }) => {
+            setQueries(queries)
         })
 
-        socket.on(CustomEvents.QUERIES_GENERATED, (data: { queries: Array<string> }) => {
-            console.log('GENERATED_QUERIES: ', data)
+        socket.on(CustomEvents.URLS_GENERATED, ({ searchResults }: { searchResults: SearchResult[] }) => {
+            setUrlsToQueries(searchResults)
         })
 
         return () => {

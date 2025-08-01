@@ -1,3 +1,5 @@
+from turtle import up
+from llm_agents.web_searcher import web_searcher
 from models import CustomEvents, Statuses
 from llm_agents.queries_generator import queries_generator
 import socketio
@@ -20,21 +22,41 @@ async def hello():
 
 @sio.on('connect', namespace='/ws')
 async def connect(sid, environ):
-    await sio.emit('greeting', {'message':'helooooo'}, namespace='/ws', to=sid)
-    
     print(f"Client connected to /ws namespace: {sid}")
 
 @sio.on('disconnect', namespace='/ws')
 async def disconnect(sid):
     print(f"Client disconnected from /ws namespace: {sid}")
 
+async def update_status(status: Statuses, sid: str):
+        await sio.emit(CustomEvents.STATUS_UPDATE.value, {'status':status.value}, namespace='/ws', to=sid)
+
+
 @sio.on(CustomEvents.QUERY.value, namespace='/ws')
 async def start_research(sid, query):
     print(query)
     # run queries agent
-    await sio.emit(CustomEvents.STATUS_UPDATE.value, {'status':Statuses.GENERATING_QUERIES.value}, namespace='/ws', to=sid)
-    result = await Runner.run(queries_generator, input=query)
-    queries = result.final_output
+    await update_status(Statuses.GENERATING_QUERIES, sid)
+    generated_queries_result = await Runner.run(queries_generator, input=query)
+    queries = [q.model_dump() for q in generated_queries_result.final_output]
     await sio.emit(CustomEvents.QUERIES_GENERATED.value, {'queries':queries}, namespace='/ws', to=sid)
-    print(queries)
+
+    # run web search agent
+    await update_status(Statuses.SEARCHING_WEB, sid)
+
+    input=[
+        {
+            "role": "user",
+            "content": "Here are the queries:\n" + "\n".join(
+             f"{q['id']}. {q['query']}" for q in queries
+            ) + "\nFor each query, return a URL that answers it. Respond with a list of query_id and url."
+
+        }
+    ]
+
+    web_search_result = await Runner.run(web_searcher, input=input)
+    urls = [q.model_dump() for q in web_search_result.final_output]
+    await sio.emit(CustomEvents.URLS_GENERATED.value, {'searchResults': urls}, namespace='/ws', to=sid)
+    await update_status(Statuses.SCRAPING_DATA, sid)
+    print(urls)
 
