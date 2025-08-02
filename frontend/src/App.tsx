@@ -1,114 +1,51 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { use } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import Report from "./components/Report";
-import { Button } from "./components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "./components/ui/form";
-import { Input } from "./components/ui/input";
-import { querySchema, Statuses } from "./core/Models";
-import { WebSocketContext } from "./provider/WebSocketProvider";
+import Report from "./components/screens/Report";
+import { Statuses } from "./core/Models";
 import { useResearchState } from "./state/research.state";
-import Status from "./components/Status";
+import Status from "./components/status/Status";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import UserInput from "./components/screens/UserInput";
+import Process from './components/screens/Process'
 
-const startResearchFormSchema = z.object({
-	query: querySchema,
-});
+export enum TabsEnum {
+	USER_INPUT = 'userInput',
+	THINKING_PROCESS = 'thinkingProcess',
+	REPORT = 'report'
+}
 
 function App() {
-	const socket = use(WebSocketContext);
-	const { queries, status, report, model, updateStatus } = useResearchState(
+	const { status, updateStatus } = useResearchState(
 		useShallow((state) => state),
 	);
-
-	const startResearchForm = useForm<z.infer<typeof startResearchFormSchema>>({
-		resolver: zodResolver(startResearchFormSchema),
-		defaultValues: {
-			query: "",
-		},
-	});
-
-	const submitForm = async (
-		values: z.infer<typeof startResearchFormSchema>,
-	) => {
-		if (!socket) return;
-		socket.emit("query", values.query);
-	};
+	const [currentTab, setCurrentTab] = useState(TabsEnum.USER_INPUT as string)
 
 	return (
-		<main className="max-w-4xl mx-auto prose prose-a:text-blue-500 py-16">
+		<main className="max-w-6xl mx-auto prose prose-a:text-blue-500 py-16 max-h-screen flex flex-col">
 			<h1 className="mb-14">Deep Research</h1>
 			{/* <button onClick={() => updateStatus(Statuses.WAITING_CONNECTION, '')}>Set status to 0</button> */}
-			<div className="flex gap-10">
+			<div className="flex gap-10 max-h-[80vh]">
 				<Status />
-				<div>
-					<Form {...startResearchForm}>
-						<form onSubmit={startResearchForm.handleSubmit(submitForm)}>
-							<FormField
-								control={startResearchForm.control}
-								name="query"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>
-											What would you like me to do a research on?
-										</FormLabel>
-										<FormControl>
-											<Input
-												placeholder="e.g. What is the effect of flouride on humans?"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button type="submit" className="cursor-pointer mt-3">
-								Start Research
-							</Button>
-						</form>
-					</Form>
-					<p>
-						STATUS: {Statuses[status]} ({status})
-					</p>
-					{model && <p>MODEL: {model}</p>}
-					{status > Statuses.GENERATING_QUERIES && queries && (
-						<div className="mt-5">
-							<h3>Generated queries</h3>
-							<ol>
-								{queries.queries.map((query, index) => (
-									<li key={`query-${index + 1}`}>
-										<span>{query.query}</span>
-										{query.url && (
-											<span className="block">
-												<span className="italic">Source: </span>
-												<a
-													target="_blank"
-													href={query.url}
-													className="italic underline cursor-pointer"
-												>
-													{query.url}
-												</a>
-											</span>
-										)}
-									</li>
-								))}
-							</ol>
+				{status > Statuses.WAITING_CONNECTION && <Tabs onValueChange={setCurrentTab} value={currentTab} defaultValue={TabsEnum.THINKING_PROCESS} className="w-full h-full ">
+					<TabsList>
+						<TabsTrigger className="cursor-pointer" value={TabsEnum.USER_INPUT}>Input</TabsTrigger>
+						<TabsTrigger className="cursor-pointer" disabled={status < 2} value={TabsEnum.THINKING_PROCESS}>
+							Process
+						</TabsTrigger>
+						<TabsTrigger className="cursor-pointer" disabled={status < 6} value={TabsEnum.REPORT}>Report</TabsTrigger>
+					</TabsList>
+					<TabsContent value={TabsEnum.USER_INPUT}>
+						<div className="w-full h-full border p-5 rounded">
+							<UserInput setCurrentTab={setCurrentTab} />
 						</div>
-					)}
-					<hr />
-					{report && (
-						<Report className="max-w-full text-justify" report={report} />
-					)}
-					<hr />
-				</div>
+					</TabsContent>
+					<TabsContent value={TabsEnum.THINKING_PROCESS}>
+						<div className="w-full h-full border p-5 rounded">
+							<Process />
+						</div>
+					</TabsContent>
+					<TabsContent value={TabsEnum.REPORT}><Report className="border p-5 h-full overflow-y-auto" /></TabsContent>
+				</Tabs>}
 			</div>
 		</main>
 	);

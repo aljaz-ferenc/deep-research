@@ -2,14 +2,16 @@ import { useRef } from "react";
 import Markdown from "react-markdown";
 import { useReactToPrint } from "react-to-print";
 import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
+import { useResearchState } from "@/state/research.state";
+import { useShallow } from "zustand/react/shallow";
 
 type ReportProps = {
-    report: string;
     className?: string;
 };
 
-export default function Report({ report, className }: ReportProps) {
+export default function Report({ className }: ReportProps) {
+    const { report } = useResearchState(useShallow(state => state))
     const reportRef = useRef<HTMLDivElement>(null);
     const reactToPrint = useReactToPrint({
         contentRef: reportRef,

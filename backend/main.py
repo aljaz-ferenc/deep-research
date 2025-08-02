@@ -24,7 +24,7 @@ async def hello():
 @sio.on('connect', namespace='/ws')
 async def connect(sid, environ):
     print(f"Client connected to /ws namespace: {sid}")
-    await update_status(Statuses.WAITING_CONNECTION, sid)
+    await update_status(Statuses.READY , sid, '')
 
 @sio.on('disconnect', namespace='/ws')
 async def disconnect(sid):
@@ -39,7 +39,7 @@ async def start_research(sid, query):
     # print(query)
     # run queries agent
     with trace("Deep Research"):
-        await update_status(Statuses.GENERATING_QUERIES, sid, queries_generator.model)
+        await update_status(Statuses.GENERATING_QUERIES, sid, queries_generator.model.model)
         generated_queries_result = await Runner.run(queries_generator, input=query)
         # print(generated_queries_result.final_output)
         output: GeneratedQueriesOutput = generated_queries_result.final_output
@@ -88,7 +88,7 @@ async def start_research(sid, query):
         report = report_result.final_output
         print(report)
 
-        await update_status(Statuses.COMPLETE, sid)
+        await update_status(Statuses.COMPLETE, sid, '')
         await sio.emit(CustomEvents.REPORT_GENERATED.value, {"report": report}, namespace='/ws', to=sid)
 
     

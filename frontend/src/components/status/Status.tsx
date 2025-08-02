@@ -3,6 +3,7 @@ import { useResearchState } from "@/state/research.state";
 import { useShallow } from "zustand/react/shallow";
 import { motion } from 'motion/react'
 import StatusIndicator from "./StatusIndicator";
+import { Statuses } from "@/core/Models";
 
 const statuses = {
     1: "Connected",
@@ -21,7 +22,7 @@ export default function Status() {
             return (
                 <div
                     className="relative cursor-pointer"
-
+                    key={num}
                     //TODO: remove
                     onClick={() => updateStatus(Number(num), 'gpt-4o-mini')}
                 >
@@ -53,6 +54,9 @@ export default function Status() {
                 </div>
             )
         })}
+        {/* <p>
+            Current Status: {Statuses[status]} ({status})
+        </p> */}
     </div >
 }
 

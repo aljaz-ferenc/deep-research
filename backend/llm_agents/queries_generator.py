@@ -1,9 +1,11 @@
 from agents import Agent
 import os
 from pydantic import BaseModel
+from agents.extensions.models.litellm_model import LitellmModel
+
 
 # number_of_queries = os.getenv("NUM_OF_QUERIES")
-number_of_queries = 2
+number_of_queries = 1
 
 class GeneratedQuery(BaseModel):
     query: str
@@ -23,7 +25,10 @@ instructions = (
 
 queries_generator = Agent(
     name="Queries Generator",
-    model="gpt-4o-mini",
+    model=LitellmModel(
+        model="gemini/gemini-2.5-flash",
+        api_key=os.getenv("GEMINI_API_KEY")
+    ),
     instructions=instructions,
     output_type=GeneratedQueriesOutput
 )
