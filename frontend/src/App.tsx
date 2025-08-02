@@ -16,6 +16,8 @@ import { Input } from "./components/ui/input";
 import { querySchema, Statuses } from "./core/Models";
 import { WebSocketContext } from "./provider/WebSocketProvider";
 import { useResearchState } from "./state/research.state";
+import Markdown from 'react-markdown'
+import { cn } from "./lib/utils";
 
 const startResearchFormSchema = z.object({
 	query: querySchema,
@@ -35,13 +37,12 @@ function App() {
 	const submitForm = async (
 		values: z.infer<typeof startResearchFormSchema>,
 	) => {
-		// await startResearch(values.query);
 		if (!socket) return;
 		socket.emit("query", values.query);
 	};
 
 	return (
-		<>
+		<main className="max-w-2xl mx-auto">
 			<h1 className="font-bold text-2xl mb-5">Deep Research</h1>
 			<Form {...startResearchForm}>
 				<form onSubmit={startResearchForm.handleSubmit(submitForm)}>
@@ -100,9 +101,23 @@ function App() {
 					</p>
 				</div>
 			)}
-			{report && <div>{report}</div>}
-		</>
+			{report && <Report className="mt-10" report={report} />}
+		</main>
 	);
 }
 
 export default App;
+
+type ReportProps = {
+	report: string,
+	className?: string
+}
+
+function Report({ report, className }: ReportProps) {
+	return (
+		<div className={cn(["prose", className])}>
+			<Markdown >{report}
+			</Markdown>
+		</div>
+	)
+}

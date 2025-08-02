@@ -68,11 +68,11 @@ async def start_research(sid, query):
 
         summaries=f"Original query: {query}\n\n"
         
-        for url in urls:
-            print(url['url']) 
-
+        for index, url in enumerate(urls):
+            print(url['url'])
             scrape_result = await Runner.run(scraper, input=url['url'])
-            summaries += f"{scrape_result.final_output}\n"
+            summaries += f"{index + 1}. {scrape_result.final_output}\n Source: {url['url']}\n\n"
+
 
         report_builder_input = (
             f"Original query form the user: {query}\n"
