@@ -24,6 +24,7 @@ async def hello():
 @sio.on('connect', namespace='/ws')
 async def connect(sid, environ):
     print(f"Client connected to /ws namespace: {sid}")
+    await update_status(Statuses.WAITING_CONNECTION, sid)
 
 @sio.on('disconnect', namespace='/ws')
 async def disconnect(sid):

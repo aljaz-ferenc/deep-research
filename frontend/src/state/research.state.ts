@@ -20,7 +20,7 @@ type ResearchStore = {
 export const useResearchState = create<ResearchStore>()(
 	persist(
 		(set) => ({
-			status: Statuses.READY,
+			status: Statuses.WAITING_CONNECTION,
 			queries: null,
 			report: "",
 			model: "",

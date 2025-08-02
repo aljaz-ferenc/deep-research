@@ -196,3 +196,9 @@
 		}
 	}
 }
+
+.checkmark{
+	svg{
+		stroke: red;
+	}
+}

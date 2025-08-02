@@ -8,9 +8,10 @@ class CustomEvents(Enum):
     REPORT_GENERATED = "report-generated"
 
 class Statuses(IntEnum):
-    READY = 0
-    GENERATING_QUERIES = 1
-    SEARCHING_WEB = 2
-    SCRAPING_DATA = 3
-    GENERATING_REPORT = 4
-    COMPLETE = 5
+    WAITING_CONNECTION = 0,
+    READY = 1
+    GENERATING_QUERIES = 2
+    SEARCHING_WEB = 3
+    SCRAPING_DATA = 4
+    GENERATING_REPORT = 5
+    COMPLETE = 6
