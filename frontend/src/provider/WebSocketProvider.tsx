@@ -16,9 +16,8 @@ const socket = io("http://localhost:8000/ws", {
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {
-	const { setQueries, updateStatus, setUrlsToQueries, setReport } = useResearchState(
-		useShallow((state) => state),
-	);
+	const { setQueries, updateStatus, setUrlsToQueries, setReport } =
+		useResearchState(useShallow((state) => state));
 
 	useEffect(() => {
 		socket.on("connect", () => {
@@ -27,7 +26,7 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 
 		socket.on(
 			CustomEvents.STATUS_UPDATE,
-			({ status, model }: { status: Statuses, model: string }) => {
+			({ status, model }: { status: Statuses; model: string }) => {
 				updateStatus(status, model);
 			},
 		);
@@ -49,14 +48,14 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 		socket.on(
 			CustomEvents.REPORT_GENERATED,
 			({ report }: { report: string }) => {
-				setReport(report)
-			}
-		)
+				setReport(report);
+			},
+		);
 
 		return () => {
 			socket.off("connect");
 		};
-	}, [setQueries, setUrlsToQueries, updateStatus]);
+	}, [setQueries, setUrlsToQueries, updateStatus, setReport]);
 
 	return (
 		<WebSocketContext.Provider value={socket}>

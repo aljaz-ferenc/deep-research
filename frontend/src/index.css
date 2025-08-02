@@ -188,3 +188,11 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+#report {
+	@media print {
+		button {
+			display: none;
+		}
+	}
+}
