@@ -25,7 +25,7 @@ const startResearchFormSchema = z.object({
 
 function App() {
 	const socket = use(WebSocketContext);
-	const { queries, status, report } = useResearchState(useShallow((state) => state));
+	const { queries, status, report, model } = useResearchState(useShallow((state) => state));
 
 	const startResearchForm = useForm<z.infer<typeof startResearchFormSchema>>({
 		resolver: zodResolver(startResearchFormSchema),
@@ -42,8 +42,8 @@ function App() {
 	};
 
 	return (
-		<main className="max-w-2xl mx-auto">
-			<h1 className="font-bold text-2xl mb-5">Deep Research</h1>
+		<main className="max-w-4xl mx-auto prose">
+			<h1>Deep Research</h1>
 			<Form {...startResearchForm}>
 				<form onSubmit={startResearchForm.handleSubmit(submitForm)}>
 					<FormField
@@ -64,7 +64,7 @@ function App() {
 							</FormItem>
 						)}
 					/>
-					<Button type="submit" className="mt-5 cursor-pointer">
+					<Button type="submit" className="cursor-pointer">
 						Start Research
 					</Button>
 				</form>
@@ -72,36 +72,44 @@ function App() {
 			<p>
 				STATUS: {Statuses[status]} ({status})
 			</p>
+			{model && <p>MODEL: {model}</p>}
 			{status > Statuses.GENERATING_QUERIES && queries && (
 				<div className="mt-5">
-					<p>
-						<strong>Questions</strong>
-					</p>
-					<ul className="flex flex-col gap-1">
+					<h3>
+						Generated queries
+					</h3>
+					<ol>
 						{queries.queries.map((query, index) => (
-							<li key={`query-${index + 1}`} className="flex flex-col gap-2">
+							<li key={`query-${index + 1}`}>
 								<span>
-									{query.id}. {query.query}
+									{query.query}
 								</span>
 								{query.url && (
-									<a
-										target="_blank"
-										href={query.url}
-										className="text-blue underline cursor-pointer"
-									>
-										{query.url}
-									</a>
+									<span className="block">
+										<span className="italic">Source: </span>
+										<a
+											target="_blank"
+											href={query.url}
+											className="italic underline cursor-pointer"
+										>
+											{query.url}
+										</a>
+									</span>
 								)}
 							</li>
 						))}
-					</ul>
-					<p className="mb-5 flex flex-col mt-5">
-						<strong>Explanation</strong>
+					</ol>
+					{/* <h3 className="flex flex-col">
+						Why those queries were selected
+					</h3>
+					<p>
 						{queries.explanation}
-					</p>
+					</p> */}
 				</div>
 			)}
-			{report && <Report className="mt-10" report={report} />}
+			<hr />
+			{report && <Report className="mt-10 max-w-[800px] mx-auto" report={report} />}
+			<hr />
 		</main>
 	);
 }
@@ -116,7 +124,7 @@ type ReportProps = {
 function Report({ report, className }: ReportProps) {
 	return (
 		<div className={cn(["prose", className])}>
-			<Markdown >{report}
+			<Markdown>{report}
 			</Markdown>
 		</div>
 	)

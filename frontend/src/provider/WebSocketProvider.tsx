@@ -27,8 +27,8 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 
 		socket.on(
 			CustomEvents.STATUS_UPDATE,
-			({ status }: { status: Statuses }) => {
-				updateStatus(status);
+			({ status, model }: { status: Statuses, model: string }) => {
+				updateStatus(status, model);
 			},
 		);
 

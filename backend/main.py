@@ -29,8 +29,8 @@ async def connect(sid, environ):
 async def disconnect(sid):
     print(f"Client disconnected from /ws namespace: {sid}")
 
-async def update_status(status: Statuses, sid: str):
-        await sio.emit(CustomEvents.STATUS_UPDATE.value, {'status':status.value}, namespace='/ws', to=sid)
+async def update_status(status: Statuses, sid: str, model: str):
+        await sio.emit(CustomEvents.STATUS_UPDATE.value, {'status':status.value, 'model': model}, namespace='/ws', to=sid)
 
 
 @sio.on(CustomEvents.QUERY.value, namespace='/ws')
@@ -38,7 +38,7 @@ async def start_research(sid, query):
     # print(query)
     # run queries agent
     with trace("Deep Research"):
-        await update_status(Statuses.GENERATING_QUERIES, sid)
+        await update_status(Statuses.GENERATING_QUERIES, sid, queries_generator.model)
         generated_queries_result = await Runner.run(queries_generator, input=query)
         # print(generated_queries_result.final_output)
         output: GeneratedQueriesOutput = generated_queries_result.final_output
@@ -47,7 +47,7 @@ async def start_research(sid, query):
         await sio.emit(CustomEvents.QUERIES_GENERATED.value, {'queries':{'queries': queries, 'explanation': explanation}}, namespace='/ws', to=sid)
 
         # # run web search agent
-        await update_status(Statuses.SEARCHING_WEB, sid)
+        await update_status(Statuses.SEARCHING_WEB, sid, web_searcher.model)
 
         input = [
         {
@@ -64,7 +64,7 @@ async def start_research(sid, query):
         web_search_result = await Runner.run(web_searcher, input=input)
         urls = [q.model_dump() for q in web_search_result.final_output]
         await sio.emit(CustomEvents.URLS_GENERATED.value, {'searchResults': urls}, namespace='/ws', to=sid)
-        await update_status(Statuses.SCRAPING_DATA, sid)
+        await update_status(Statuses.SCRAPING_DATA, sid, scraper.model)
 
         summaries=f"Original query: {query}\n\n"
         
@@ -82,7 +82,7 @@ async def start_research(sid, query):
         print('REPORT_BUILDER_INPUT: ', report_builder_input)
         print('SUMMARIES: ', summaries)
         
-        await update_status(Statuses.GENERATING_REPORT, sid)
+        await update_status(Statuses.GENERATING_REPORT, sid, report_builder.model)
         report_result = await Runner.run(report_builder, input=report_builder_input)
         report = report_result.final_output
         print(report)

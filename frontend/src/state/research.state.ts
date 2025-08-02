@@ -10,7 +10,8 @@ type ResearchStore = {
 	status: Statuses;
 	queries: GeneratedQueriesOutput | null;
 	report: string,
-	updateStatus: (status: Statuses) => void;
+	model: string,
+	updateStatus: (status: Statuses, model: string) => void;
 	setQueries: (queries: GeneratedQueriesOutput) => void;
 	setUrlsToQueries: (searchResults: SearchResult[]) => void;
 	setReport: (report: string) => void
@@ -22,7 +23,8 @@ export const useResearchState = create<ResearchStore>()(
 		status: Statuses.READY,
 		queries: null,
 		report: '',
-		updateStatus: (status) => set({ status }),
+		model: '',
+		updateStatus: (status, model) => set({ status, model }),
 		setQueries: (queries) => set({ queries }),
 		setUrlsToQueries: (searchResults) => {
 		  set((state) => {
