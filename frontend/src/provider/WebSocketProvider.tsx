@@ -16,7 +16,7 @@ const socket = io("http://localhost:8000/ws", {
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {
-	const { setQueries, updateStatus, setUrlsToQueries } = useResearchState(
+	const { setQueries, updateStatus, setUrlsToQueries, setReport } = useResearchState(
 		useShallow((state) => state),
 	);
 
@@ -45,6 +45,13 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 				setUrlsToQueries(searchResults);
 			},
 		);
+
+		socket.on(
+			CustomEvents.REPORT_GENERATED,
+			({ report }: { report: string }) => {
+				setReport(report)
+			}
+		)
 
 		return () => {
 			socket.off("connect");

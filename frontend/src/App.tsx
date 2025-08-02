@@ -23,7 +23,7 @@ const startResearchFormSchema = z.object({
 
 function App() {
 	const socket = use(WebSocketContext);
-	const { queries, status } = useResearchState(useShallow((state) => state));
+	const { queries, status, report } = useResearchState(useShallow((state) => state));
 
 	const startResearchForm = useForm<z.infer<typeof startResearchFormSchema>>({
 		resolver: zodResolver(startResearchFormSchema),
@@ -100,6 +100,7 @@ function App() {
 					</p>
 				</div>
 			)}
+			{report && <div>{report}</div>}
 		</>
 	);
 }

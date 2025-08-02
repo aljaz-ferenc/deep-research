@@ -8,14 +8,17 @@ import {
 type ResearchStore = {
 	status: Statuses;
 	queries: GeneratedQueriesOutput | null;
+	report: string,
 	updateStatus: (status: Statuses) => void;
 	setQueries: (queries: GeneratedQueriesOutput) => void;
 	setUrlsToQueries: (searchResults: SearchResult[]) => void;
+	setReport: (report: string) => void
 };
 
 export const useResearchState = create<ResearchStore>((set) => ({
 	status: Statuses.READY,
 	queries: null,
+	report: "",
 	updateStatus: (status) => set({ status }),
 	setQueries: (queries) => set({ queries }),
 	setUrlsToQueries: (searchResults) => {
@@ -37,4 +40,5 @@ export const useResearchState = create<ResearchStore>((set) => ({
 			};
 		});
 	},
+	setReport: (report) => set({report})
 }));

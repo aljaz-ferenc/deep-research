@@ -11,6 +11,7 @@ export enum CustomEvents {
 	STATUS_UPDATE = "status-update",
 	QUERIES_GENERATED = "queries-generated",
 	URLS_GENERATED = "urls-generated",
+	REPORT_GENERATED = "report-generated"
 }
 
 export enum Statuses {
@@ -18,6 +19,8 @@ export enum Statuses {
 	GENERATING_QUERIES = 1,
 	SEARCHING_WEB = 2,
 	SCRAPING_DATA = 3,
+	GENERATING_REPORT = 4,
+	COMPLETE = 5
 }
 
 export type GeneratedQuery = {
