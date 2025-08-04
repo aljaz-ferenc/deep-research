@@ -19,7 +19,7 @@ export default function Process() {
 						{queries.queries.map((query, index) => (
 							<li key={`query-${index + 1}`}>
 								<span>{query.query}</span>
-								{query.url && (
+								{/* {query.url && (
 									<span className="block">
 										<span className="italic">Source: </span>
 										<a
@@ -30,7 +30,7 @@ export default function Process() {
 											{query.url}
 										</a>
 									</span>
-								)}
+								)} */}
 							</li>
 						))}
 					</ol>
@@ -42,6 +42,14 @@ export default function Process() {
 							<p>{error}</p>
 						</div>
 					)}
+					<h3>Sources</h3>
+					<ul className="flex flex-col">
+						{queries.queries.map(query => (
+							<li>
+								<a>{query.url}</a>
+							</li>
+						))}
+					</ul>
 				</div>
 			)}
 		</div>

@@ -1,3 +1,4 @@
+from llm_agents.translator import run_translator
 from llm_agents.report_builder import report_builder, run_builder
 from llm_agents.scraper import run_scraper, scraper
 from llm_agents.web_searcher import get_web_searcher_input, run_web_search, web_searcher
@@ -35,17 +36,20 @@ async def update_status(status: Statuses, sid: str, model: str):
 
 
 @sio.on(CustomEvents.QUERY.value, namespace='/ws')
-async def start_research(sid, query):
+async def start_research(sid, query, language="English"):
     try:
         with trace("Deep Research"):
             #generate queries
             await update_status(Statuses.GENERATING_QUERIES, sid, queries_generator.model.model)
-            queries, explanation = await run_queires_generator(query)
-            await sio.emit(CustomEvents.QUERIES_GENERATED.value, {'queries':{'queries': queries, 'explanation': explanation}}, namespace='/ws', to=sid)
+            queries_output = await run_queires_generator(query)
+            queries = queries_output.queries
+            explanation = queries_output.explanation
+
+            await sio.emit(CustomEvents.QUERIES_GENERATED.value, {'queries':{'queries': [q.model_dump() for q in queries], 'explanation': explanation}}, namespace='/ws', to=sid)
 
             # #search web for links
             await update_status(Statuses.SEARCHING_WEB, sid, web_searcher.model)
-            urls = await run_web_search(explanation, queries)
+            urls = await run_web_search(explanation, queries_output)
             await sio.emit(CustomEvents.URLS_GENERATED.value, {'searchResults': urls}, namespace='/ws', to=sid)
 
             #scrape links for data
@@ -55,6 +59,11 @@ async def start_research(sid, query):
             #build report
             await update_status(Statuses.GENERATING_REPORT, sid, report_builder.model.model)
             report = await run_builder(query, summaries)
+
+            if language != 'English':
+                #translate report
+                report = await run_translator(language=language, report=report)
+
             await update_status(Statuses.COMPLETE, sid, '')
             await sio.emit(CustomEvents.REPORT_GENERATED.value, {"report": report}, namespace='/ws', to=sid)
     except Exception as e:

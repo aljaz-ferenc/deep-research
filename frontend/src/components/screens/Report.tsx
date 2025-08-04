@@ -9,6 +9,8 @@ import { Button } from "../ui/button";
 type ReportProps = {
 	className?: string;
 };
+import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
 
 export default function Report({ className }: ReportProps) {
 	const { report } = useResearchState(useShallow((state) => state));
@@ -27,6 +29,7 @@ export default function Report({ className }: ReportProps) {
     `,
 	});
 
+
 	return (
 		<div ref={reportRef} id="report" className={cn([className])}>
 			<Button
@@ -38,18 +41,8 @@ export default function Report({ className }: ReportProps) {
 				Print to PDF
 			</Button>
 			<Markdown
-				components={{
-					h2: ({ node, ...props }) => {
-						const text = String(props.children);
-						const id = text.toLowerCase().replace(/\s+/g, "-");
-						return <h2 id={id} {...props} />;
-					},
-					h3: ({ node, ...props }) => {
-						const text = String(props.children);
-						const id = text.toLowerCase().replace(/\s+/g, "-");
-						return <h3 id={id} {...props} />;
-					},
-				}}
+				remarkPlugins={[remarkGfm]}
+				rehypePlugins={[rehypeSlug]}
 			>
 				{report}
 			</Markdown>

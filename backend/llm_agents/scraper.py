@@ -32,9 +32,11 @@ def url_scrape(url: str) -> str:
     except Exception as e:
         return f"Failed to scrape content from {url}: {str(e)}"
 
+SUMMARY_WORD_COUNT = 100
+
 instructions = (
     "You are a research assistant. Given a URL, you will analyze the content of the URL "
-    "and produce a concise summary of the information. The summary must be 2-3 paragraphs."
+    f"and produce a concise summary of the information. The summary must be around {SUMMARY_WORD_COUNT} words long."
     "Capture the main points. Write succinctly, no need to have complete sentences or perfect "
     "grammar. This will be consumed by someone synthesizing a report, so it's vital you capture the "
     "essence and ignore any fluff. Do not include any additional commentary other than the summary "

@@ -3,8 +3,6 @@ import os
 from pydantic import BaseModel
 from agents.extensions.models.litellm_model import LitellmModel
 
-number_of_queries = 1
-
 class GeneratedQuery(BaseModel):
     query: str
     id: int
@@ -12,6 +10,8 @@ class GeneratedQuery(BaseModel):
 class GeneratedQueriesOutput(BaseModel):
     queries: list[GeneratedQuery]
     explanation: str
+
+number_of_queries = int(os.getenv("NUM_OF_QUERIES"))
 
 instructions = (
     f"Generate {number_of_queries} distinct, well-formed, insightful research queries based on the user’s original input. The queries should help explore the topic deeply and from multiple relevant angles. Please provide the explanation of your thought process and why you chose those specific queries. Explanation does not have to go into details for every single query, it should be an overview about what topics the research should include and why they are important for the research. Make the explanation sound formal and do not talk about yourself in first person. In your answer refer to queries as 'questions' so it sounds more natural to the user. "
@@ -34,8 +34,4 @@ queries_generator = Agent(
 async def run_queires_generator(original_query: str):
     generated_queries_result = await Runner.run(queries_generator, input=original_query)
     output: GeneratedQueriesOutput = generated_queries_result.final_output
-    queries = [q.model_dump() for q in output.queries]
-    explanation = output.explanation
-  
-
-    return (queries, explanation)
+    return output

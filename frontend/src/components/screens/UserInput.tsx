@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type Dispatch, type SetStateAction, use } from "react";
+import { type Dispatch, type SetStateAction, use, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { useShallow } from "zustand/react/shallow";
@@ -48,6 +48,7 @@ export default function UserInput({ setCurrentTab }: UserInputProps) {
 		setCurrentTab(TabsEnum.THINKING_PROCESS);
 	};
 
+
 	return (
 		<div>
 			<Form {...startResearchForm}>
@@ -56,8 +57,8 @@ export default function UserInput({ setCurrentTab }: UserInputProps) {
 						control={startResearchForm.control}
 						name="query"
 						render={({ field }) => (
-							<FormItem>
-								<FormLabel>
+							<FormItem className="mb-10">
+								<FormLabel className="mb-2">
 									What would you like me to do a research on?
 								</FormLabel>
 								<FormControl>
@@ -74,7 +75,7 @@ export default function UserInput({ setCurrentTab }: UserInputProps) {
 					<Button
 						type="submit"
 						disabled={status > 1 && !error}
-						className="cursor-pointer mt-3"
+						className="cursor-pointer mt-3 self-start"
 					>
 						Start Research
 					</Button>

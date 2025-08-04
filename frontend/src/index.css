@@ -191,6 +191,8 @@
 
 #report {
 	@media print {
+			border: none;
+			@apply prose prose-a:decoration-transparent prose-a:text-blue-500;
 		button {
 			display: none;
 		}
