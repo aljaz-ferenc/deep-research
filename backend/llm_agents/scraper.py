@@ -1,4 +1,4 @@
-from agents import Agent, function_tool
+from agents import Agent, function_tool, Runner, trace
 from bs4 import BeautifulSoup
 import requests
 
@@ -47,3 +47,13 @@ scraper = Agent(
     tools=[url_scrape],
     model="gpt-4o-mini"
 )
+
+
+async def run_scraper(original_query: str, urls):
+    summaries=f"Original query: {original_query}\n\n"
+
+    for index, url in enumerate(urls):
+        scrape_result = await Runner.run(scraper, input=url['url'])
+        summaries += f"{index + 1}. {scrape_result.final_output}\n Source: {url['url']}\n\n"
+
+    return summaries

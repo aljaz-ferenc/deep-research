@@ -1,10 +1,8 @@
-from agents import Agent
+from agents import Agent, Runner
 import os
 from pydantic import BaseModel
 from agents.extensions.models.litellm_model import LitellmModel
 
-
-# number_of_queries = os.getenv("NUM_OF_QUERIES")
 number_of_queries = 1
 
 class GeneratedQuery(BaseModel):
@@ -32,3 +30,12 @@ queries_generator = Agent(
     instructions=instructions,
     output_type=GeneratedQueriesOutput
 )
+
+async def run_queires_generator(original_query: str):
+    generated_queries_result = await Runner.run(queries_generator, input=original_query)
+    output: GeneratedQueriesOutput = generated_queries_result.final_output
+    queries = [q.model_dump() for q in output.queries]
+    explanation = output.explanation
+  
+
+    return (queries, explanation)
