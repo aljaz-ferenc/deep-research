@@ -12,6 +12,7 @@ export enum CustomEvents {
 	QUERIES_GENERATED = "queries-generated",
 	URLS_GENERATED = "urls-generated",
 	REPORT_GENERATED = "report-generated",
+	ERROR = "error",
 }
 
 export enum Statuses {

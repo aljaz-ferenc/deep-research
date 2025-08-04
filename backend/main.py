@@ -36,26 +36,34 @@ async def update_status(status: Statuses, sid: str, model: str):
 
 @sio.on(CustomEvents.QUERY.value, namespace='/ws')
 async def start_research(sid, query):
-    with trace("Deep Research"):
+    try:
+        with trace("Deep Research"):
+            #generate queries
+            await update_status(Statuses.GENERATING_QUERIES, sid, queries_generator.model.model)
+            queries, explanation = await run_queires_generator(query)
+            await sio.emit(CustomEvents.QUERIES_GENERATED.value, {'queries':{'queries': queries, 'explanation': explanation}}, namespace='/ws', to=sid)
 
-        #generate queries
-        await update_status(Statuses.GENERATING_QUERIES, sid, queries_generator.model.model)
-        queries, explanation = await run_queires_generator(query)
-        await sio.emit(CustomEvents.QUERIES_GENERATED.value, {'queries':{'queries': queries, 'explanation': explanation}}, namespace='/ws', to=sid)
+            # #search web for links
+            await update_status(Statuses.SEARCHING_WEB, sid, web_searcher.model)
+            urls = await run_web_search(explanation, queries)
+            await sio.emit(CustomEvents.URLS_GENERATED.value, {'searchResults': urls}, namespace='/ws', to=sid)
 
-        # #search web for links
-        await update_status(Statuses.SEARCHING_WEB, sid, web_searcher.model)
-        urls = await run_web_search(explanation, queries)
-        await sio.emit(CustomEvents.URLS_GENERATED.value, {'searchResults': urls}, namespace='/ws', to=sid)
+            #scrape links for data
+            await update_status(Statuses.SCRAPING_DATA, sid, scraper.model)
+            summaries = await run_scraper(query, urls)
 
-        #scrape links for data
-        await update_status(Statuses.SCRAPING_DATA, sid, scraper.model)
-        summaries = await run_scraper(query, urls)
+            #build report
+            await update_status(Statuses.GENERATING_REPORT, sid, report_builder.model.model)
+            report = await run_builder(query, summaries)
+            await update_status(Statuses.COMPLETE, sid, '')
+            await sio.emit(CustomEvents.REPORT_GENERATED.value, {"report": report}, namespace='/ws', to=sid)
+    except Exception as e:
+        print(f'ERROR: {e}')
 
-        #build report
-        await update_status(Statuses.GENERATING_REPORT, sid, report_builder.model.model)
-        report = await run_builder(query, summaries)
-        await update_status(Statuses.COMPLETE, sid, '')
-        await sio.emit(CustomEvents.REPORT_GENERATED.value, {"report": report}, namespace='/ws', to=sid)
+        error = 'Server error'
 
+        if("rate_limit_exceeded" in str(e)):
+            error = "Rate limit reached for gpt-4o-mini. Plaease wait and try again."
+
+        await sio.emit(CustomEvents.ERROR.value, {"error": error}, namespace='/ws', to=sid)
     

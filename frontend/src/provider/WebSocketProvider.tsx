@@ -1,11 +1,16 @@
-import { createContext, type PropsWithChildren, useEffect } from "react";
+import {
+	createContext,
+	type PropsWithChildren,
+	useCallback,
+	useEffect,
+} from "react";
 import { io, type Socket } from "socket.io-client";
 import { useShallow } from "zustand/react/shallow";
 import {
 	CustomEvents,
-	Statuses,
 	type GeneratedQueriesOutput,
 	type SearchResult,
+	Statuses,
 } from "@/core/Models";
 import { useResearchState } from "@/state/research.state";
 export const WebSocketContext = createContext<Socket | null>(null);
@@ -13,20 +18,14 @@ export const WebSocketContext = createContext<Socket | null>(null);
 const socket = io("http://localhost:8000/ws", {
 	path: "/ws/socket.io",
 	transports: ["websocket", "polling"],
-	reconnection: false
+	reconnection: false,
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {
-	const { setQueries, updateStatus, setUrlsToQueries, setReport } =
+	const { setQueries, updateStatus, setUrlsToQueries, setReport, setError } =
 		useResearchState(useShallow((state) => state));
 
-	const handleDisconnect = () => {
-		console.log("disconnected");
-		updateStatus(Statuses.WAITING_CONNECTION, '');
-		attemptReconnect();
-	};
-
-	const attemptReconnect = () => {
+	const attemptReconnect = useCallback(() => {
 		const interval = setInterval(() => {
 			console.log("trying to reconnect...");
 			socket.connect();
@@ -36,15 +35,20 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 			console.log("reconnected");
 			clearInterval(interval);
 		});
-	};
+	}, []);
+
+	const handleDisconnect = useCallback(() => {
+		console.log("disconnected");
+		updateStatus(Statuses.WAITING_CONNECTION, "");
+		attemptReconnect();
+	}, [updateStatus, attemptReconnect]);
 
 	useEffect(() => {
 		socket.on("connect", () => {
 			console.log("connected to ws");
 		});
 
-		socket.on("disconnect", handleDisconnect)
-
+		socket.on("disconnect", handleDisconnect);
 
 		socket.on(
 			CustomEvents.STATUS_UPDATE,
@@ -74,11 +78,22 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 			},
 		);
 
+		socket.on(CustomEvents.ERROR, ({ error }: { error: string }) => {
+			setError(error);
+		});
+
 		return () => {
 			socket.off("connect");
 			socket.off("disconnect", handleDisconnect);
 		};
-	}, [setQueries, setUrlsToQueries, updateStatus, setReport]);
+	}, [
+		setQueries,
+		setUrlsToQueries,
+		updateStatus,
+		setReport,
+		handleDisconnect,
+		setError,
+	]);
 
 	return (
 		<WebSocketContext.Provider value={socket}>

@@ -11,20 +11,23 @@ type ResearchStore = {
 	queries: GeneratedQueriesOutput | null;
 	report: string;
 	model: string;
+	error: string;
 	updateStatus: (status: Statuses, model: string) => void;
 	setQueries: (queries: GeneratedQueriesOutput) => void;
 	setUrlsToQueries: (searchResults: SearchResult[]) => void;
 	setReport: (report: string) => void;
-	resetStore: () => void
+	resetStore: () => void;
+	setError: (error: string) => void;
 };
 
-export const useResearchState = create<ResearchStore>()(	
+export const useResearchState = create<ResearchStore>()(
 	persist(
 		(set, getState) => ({
 			status: Statuses.WAITING_CONNECTION,
 			queries: null,
 			report: "",
 			model: "",
+			error: "",
 			updateStatus: (status, model) => set({ status, model }),
 			setQueries: (queries) => set({ queries }),
 			setUrlsToQueries: (searchResults) => {
@@ -47,13 +50,16 @@ export const useResearchState = create<ResearchStore>()(
 				});
 			},
 			setReport: (report) => set({ report }),
-			resetStore: () => set({
-				...getState(),
-				status: Statuses.READY,
-				queries: null,
-				report: '',
-				model: ''
-			})
+			resetStore: () =>
+				set({
+					...getState(),
+					status: Statuses.READY,
+					queries: null,
+					report: "",
+					model: "",
+					error: "",
+				}),
+			setError: (error) => set({ error }),
 		}),
 		{
 			name: "research-storage",

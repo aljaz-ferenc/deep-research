@@ -6,6 +6,7 @@ class CustomEvents(Enum):
     QUERIES_GENERATED = "queries-generated"
     URLS_GENERATED = "urls-generated"
     REPORT_GENERATED = "report-generated"
+    ERROR = "error"
 
 class Statuses(IntEnum):
     WAITING_CONNECTION = 0,
