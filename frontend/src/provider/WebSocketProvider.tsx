@@ -13,9 +13,16 @@ import {
 	Statuses,
 } from "@/core/Models";
 import { useResearchState } from "@/state/research.state";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL
+
+if (!BASE_URL) {
+	console.error("BASE_URL environment variable missing")
+}
+
 export const WebSocketContext = createContext<Socket | null>(null);
 
-const socket = io("http://localhost:8000/ws", {
+const socket = io(`${BASE_URL}/ws`, {
 	path: "/ws/socket.io",
 	transports: ["websocket", "polling"],
 });
