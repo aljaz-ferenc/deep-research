@@ -18,36 +18,22 @@ export const WebSocketContext = createContext<Socket | null>(null);
 const socket = io("http://localhost:8000/ws", {
 	path: "/ws/socket.io",
 	transports: ["websocket", "polling"],
-	reconnection: false,
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {
 	const { setQueries, updateStatus, setUrlsToQueries, setReport, setError } =
 		useResearchState(useShallow((state) => state));
 
-	const attemptReconnect = useCallback(() => {
-		const interval = setInterval(() => {
-			console.log("trying to reconnect...");
-			socket.connect();
-		}, 3000);
-
-		socket.on("connect", () => {
-			console.log("reconnected");
-			clearInterval(interval);
-		});
-	}, []);
-
 	const handleDisconnect = useCallback(() => {
-		console.log("disconnected");
 		updateStatus(Statuses.WAITING_CONNECTION, "");
-		attemptReconnect();
-	}, [updateStatus, attemptReconnect]);
+	}, [updateStatus]);
 
 	useEffect(() => {
-		socket.on("connect", () => {
-			console.log("connected to ws");
-		});
+		if (socket.connected) return
+		handleDisconnect()
+	}, [socket.connected])
 
+	useEffect(() => {
 		socket.on("disconnect", handleDisconnect);
 
 		socket.on(
@@ -83,16 +69,15 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 		});
 
 		return () => {
-			socket.off("connect");
-			socket.off("disconnect", handleDisconnect);
+			socket.off("disconnect");
 		};
 	}, [
 		setQueries,
 		setUrlsToQueries,
 		updateStatus,
 		setReport,
-		handleDisconnect,
 		setError,
+		handleDisconnect
 	]);
 
 	return (
