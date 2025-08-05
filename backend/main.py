@@ -12,13 +12,16 @@ import socketio
 from fastapi import FastAPI
 from agents import Runner, trace
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
 # uv run python -m uvicorn main:app --reload
 
+ORIGIN_URL=os.getenv("ORIGIN_URL")
+
 sio = socketio.AsyncServer(
-    async_mode="asgi", cors_allowed_origins=["http://localhost:5173"]
+    async_mode="asgi", cors_allowed_origins=[ORIGIN_URL]
 )
 app = FastAPI()
 socket_app = socketio.ASGIApp(sio, socketio_path="/ws/socket.io")

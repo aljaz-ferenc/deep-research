@@ -36,7 +36,6 @@ __pycache__/
 .env.*
 
 .cache/
-vite.config.ts
 
 coverage/
 *.cover
