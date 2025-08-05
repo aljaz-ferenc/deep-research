@@ -1,0 +1,8 @@
+[build]
+  base = "frontend"
+  command = "pnpm build"
+  publish = "frontend/dist"
+
+[build.environment]
+  NPM_FLAGS = "--version"
+  NETLIFY_USE_PNPM = "true"
