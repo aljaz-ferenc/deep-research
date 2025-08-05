@@ -2,7 +2,7 @@ from agents import Agent, Runner
 from agents.extensions.models.litellm_model import LitellmModel
 import os
 
-WORD_COUNT=int(os.getenv("REPORT_WORD_COUNT"))
+WORD_COUNT = int(os.getenv("REPORT_WORD_COUNT"))
 
 instructions = (
     "You are a research report writer. You will receive an original query from the user followed by multiple summaries "
@@ -25,16 +25,20 @@ report_builder = Agent(
     name="Report Builder",
     instructions=instructions,
     model=LitellmModel(
-        model="gemini/gemini-2.5-flash",
-        api_key=os.getenv("GEMINI_API_KEY")
-    )
+        model="gemini/gemini-2.5-flash", api_key=os.getenv("GEMINI_API_KEY")
+    ),
 )
 
-async def run_builder(original_query: str, summaries: str):
-    report_builder_input = (
-        f"Original query form the user: {original_query}\n"
-        f"Summaries: {summaries}"
-    )
 
-    report_result = await Runner.run(report_builder, input=report_builder_input)
-    return report_result.final_output
+async def run_builder(original_query: str, summaries: str):
+    try:
+        report_builder_input = (
+            f"Original query form the user: {original_query}\n"
+            f"Summaries: {summaries}"
+        )
+
+        report_result = await Runner.run(report_builder, input=report_builder_input)
+        return report_result.final_output
+    except Exception as e:
+        print(f"{report_builder.model.model} error: {str(e)}")
+        raise Exception("Error building report...")

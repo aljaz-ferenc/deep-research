@@ -4,16 +4,16 @@ from pydantic import BaseModel
 from agents import Runner, trace
 import os
 
+
 def get_web_searcher_input(explanation: str, queries: GeneratedQueriesOutput):
     return [
         {
             "role": "user",
-            "content":
-                "Here is an explanation of what the research is about:\n\n"
-                f"{explanation}\n\n"
-                "Here are the queries:\n" +
-                "\n".join(f"{q.id}. {q.query}" for q in queries.queries) +
-                "\n\nFor each query, return a URL that answers it. Respond with a list of query_id and url."
+            "content": "Here is an explanation of what the research is about:\n\n"
+            f"{explanation}\n\n"
+            "Here are the queries:\n"
+            + "\n".join(f"{q.id}. {q.query}" for q in queries.queries)
+            + "\n\nFor each query, return a URL that answers it. Respond with a list of query_id and url.",
         }
     ]
 
@@ -21,6 +21,7 @@ def get_web_searcher_input(explanation: str, queries: GeneratedQueriesOutput):
 class SearchResult(BaseModel):
     query_id: int
     url: str
+
 
 number_of_queries = int(os.getenv("NUM_OF_QUERIES"))
 
@@ -39,12 +40,17 @@ web_searcher = Agent(
     model="gpt-4o-mini",
     instructions=instructions,
     output_type=list[SearchResult],
-    tools=[WebSearchTool()]
+    tools=[WebSearchTool()],
 )
 
-async def run_web_search(explanation: str, queries: GeneratedQueriesOutput):
-    input = get_web_searcher_input(explanation, queries)
-    web_search_result = await Runner.run(web_searcher, input=input)
-    urls = [q.model_dump() for q in web_search_result.final_output]
 
-    return urls
+async def run_web_search(explanation: str, queries: GeneratedQueriesOutput):
+    try:
+        input = get_web_searcher_input(explanation, queries)
+        web_search_result = await Runner.run(web_searcher, input=input)
+        urls = [q.model_dump() for q in web_search_result.final_output]
+
+        return urls
+    except Exception as e:
+        print(f"{web_searcher.model} error: {str(e)}")
+        raise Exception(f"Error searching the web...")

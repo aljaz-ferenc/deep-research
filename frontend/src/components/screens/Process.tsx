@@ -1,6 +1,9 @@
 import { useShallow } from "zustand/react/shallow";
 import { Statuses } from "@/core/Models";
 import { useResearchState } from "@/state/research.state";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
 
 export default function Process() {
 	const { status, queries, error } = useResearchState(
@@ -35,7 +38,7 @@ export default function Process() {
 						))}
 					</ol>
 					<h3>Reasoning for generating queries above</h3>
-					<p>{queries.explanation}</p>
+					<Markdown rehypePlugins={[rehypeSlug]} remarkPlugins={[remarkGfm]}>{queries.explanation}</Markdown>
 					{error && (
 						<div>
 							<h3 className="text-red-500">Something went wrong:</h3>

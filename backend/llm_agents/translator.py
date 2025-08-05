@@ -10,19 +10,22 @@ instructions = (
 )
 
 translator = Agent(
-    name='Translator',
+    name="Translator",
     instructions=instructions,
     model=LitellmModel(
-        model="gemini/gemini-2.5-flash",
-        api_key=os.getenv("GEMINI_API_KEY")
+        model="gemini/gemini-2.5-flash", api_key=os.getenv("GEMINI_API_KEY")
     ),
-    output_type=str
+    output_type=str,
 )
 
+
 async def run_translator(language: str, report: str):
-    translator_input = (
-        f"Target language: {language}\n\n"
-        f"Report (in markdown):\n{report}"
-    )
-    result = await Runner.run(translator, input=translator_input)
-    return result.final_output
+    try:
+        translator_input = (
+            f"Target language: {language}\n\n" f"Report (in markdown):\n{report}"
+        )
+        result = await Runner.run(translator, input=translator_input)
+        return result.final_output
+    except Exception as e:
+        print(f"{translator.model.model} error: {str(e)}")
+        raise Exception(f"Error translating report...")

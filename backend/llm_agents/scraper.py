@@ -2,6 +2,7 @@ from agents import Agent, function_tool, Runner, trace
 from bs4 import BeautifulSoup
 import requests
 
+
 @function_tool
 def url_scrape(url: str) -> str:
     """
@@ -9,28 +10,29 @@ def url_scrape(url: str) -> str:
     """
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-        
+
         try:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
+            soup = BeautifulSoup(response.text, "html.parser")
+
             for script in soup(["script", "style"]):
                 script.extract()
-                
-            text = soup.get_text(separator=' ', strip=True)
-            
+
+            text = soup.get_text(separator=" ", strip=True)
+
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-            text = ' '.join(chunk for chunk in chunks if chunk)
-            
+            text = " ".join(chunk for chunk in chunks if chunk)
+
             return text[:5000] if len(text) > 5000 else text
         except ImportError:
             return response.text[:5000]
     except Exception as e:
         return f"Failed to scrape content from {url}: {str(e)}"
+
 
 SUMMARY_WORD_COUNT = 100
 
@@ -47,15 +49,21 @@ scraper = Agent(
     name="Scraper Agent",
     instructions=instructions,
     tools=[url_scrape],
-    model="gpt-4o-mini"
+    model="gpt-4o-mini",
 )
 
 
 async def run_scraper(original_query: str, urls):
-    summaries=f"Original query: {original_query}\n\n"
+    try:
+        summaries = f"Original query: {original_query}\n\n"
 
-    for index, url in enumerate(urls):
-        scrape_result = await Runner.run(scraper, input=url['url'])
-        summaries += f"{index + 1}. {scrape_result.final_output}\n Source: {url['url']}\n\n"
+        for index, url in enumerate(urls):
+            scrape_result = await Runner.run(scraper, input=url["url"])
+            summaries += (
+                f"{index + 1}. {scrape_result.final_output}\n Source: {url['url']}\n\n"
+            )
 
-    return summaries
+        return summaries
+    except Exception as e:
+        print(f"{scraper.model} error: {str(e)}")
+        raise Exception(f"Error scraping data...")

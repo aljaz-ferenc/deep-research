@@ -5,12 +5,12 @@ import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
 import { useResearchState } from "@/state/research.state";
 import { Button } from "../ui/button";
+import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
 
 type ReportProps = {
 	className?: string;
 };
-import remarkGfm from "remark-gfm";
-import rehypeSlug from "rehype-slug";
 
 export default function Report({ className }: ReportProps) {
 	const { report } = useResearchState(useShallow((state) => state));
