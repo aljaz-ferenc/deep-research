@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import Provider from "@/provider/index";
+import Provider from "./provider";
 import App from "./App.tsx";
 
 //biome-ignore lint/style/noNonNullAssertion: reason
