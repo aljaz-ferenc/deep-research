@@ -15,7 +15,9 @@ export enum TabsEnum {
 }
 
 function App() {
-	const { status, report, queries } = useResearchState(useShallow((state) => state));
+	const { status, report, queries } = useResearchState(
+		useShallow((state) => state),
+	);
 	const [currentTab, setCurrentTab] = useState(TabsEnum.USER_INPUT as string);
 
 	return (
@@ -31,13 +33,24 @@ function App() {
 						className="w-full flex flex-col flex-1 min-h-0"
 					>
 						<TabsList>
-							<TabsTrigger className="cursor-pointer" value={TabsEnum.USER_INPUT}>
+							<TabsTrigger
+								className="cursor-pointer"
+								value={TabsEnum.USER_INPUT}
+							>
 								Input
 							</TabsTrigger>
-							<TabsTrigger disabled={status < 2 && !queries?.explanation} className="cursor-pointer" value={TabsEnum.THINKING_PROCESS}>
+							<TabsTrigger
+								disabled={status < 2 && !queries?.explanation}
+								className="cursor-pointer"
+								value={TabsEnum.THINKING_PROCESS}
+							>
 								Process
 							</TabsTrigger>
-							<TabsTrigger disabled={status < 6 && !report} className="cursor-pointer" value={TabsEnum.REPORT}>
+							<TabsTrigger
+								disabled={status < 6 && !report}
+								className="cursor-pointer"
+								value={TabsEnum.REPORT}
+							>
 								Report
 							</TabsTrigger>
 						</TabsList>
@@ -48,7 +61,10 @@ function App() {
 							</div>
 						</TabsContent>
 
-						<TabsContent value={TabsEnum.THINKING_PROCESS} className="flex-1 min-h-0">
+						<TabsContent
+							value={TabsEnum.THINKING_PROCESS}
+							className="flex-1 min-h-0"
+						>
 							<div className="w-full h-full border py-5 px-16 rounded overflow-y-auto">
 								<Process />
 							</div>
@@ -63,7 +79,6 @@ function App() {
 				)}
 			</div>
 		</main>
-
 	);
 }
 

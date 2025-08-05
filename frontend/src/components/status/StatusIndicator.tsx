@@ -55,7 +55,8 @@ function Circle({ animated = false }: { animated?: boolean }) {
 		<div
 			className={cn([
 				"block",
-				animated && "animation-duration-[3s] animate-spin bg-white rounded-full",
+				animated &&
+					"animation-duration-[3s] animate-spin bg-white rounded-full",
 			])}
 		>
 			<CircleDashed size={"3ex"} />

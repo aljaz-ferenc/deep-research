@@ -1,12 +1,12 @@
 import { useRef } from "react";
 import Markdown from "react-markdown";
 import { useReactToPrint } from "react-to-print";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
 import { useResearchState } from "@/state/research.state";
 import { Button } from "../ui/button";
-import remarkGfm from "remark-gfm";
-import rehypeSlug from "rehype-slug";
 
 type ReportProps = {
 	className?: string;
@@ -29,7 +29,6 @@ export default function Report({ className }: ReportProps) {
     `,
 	});
 
-
 	return (
 		<div ref={reportRef} id="report" className={cn([className])}>
 			<Button
@@ -40,10 +39,7 @@ export default function Report({ className }: ReportProps) {
 			>
 				Print to PDF
 			</Button>
-			<Markdown
-				remarkPlugins={[remarkGfm]}
-				rehypePlugins={[rehypeSlug]}
-			>
+			<Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
 				{report}
 			</Markdown>
 		</div>

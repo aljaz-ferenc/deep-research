@@ -1,15 +1,14 @@
+import Markdown from "react-markdown";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
 import { useShallow } from "zustand/react/shallow";
 import { Statuses } from "@/core/Models";
 import { useResearchState } from "@/state/research.state";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeSlug from "rehype-slug";
 
 export default function Process() {
 	const { status, queries, error } = useResearchState(
 		useShallow((state) => state),
 	);
-	console.log(queries);
 
 	return (
 		<div className="h-full w-full flex">
@@ -22,37 +21,33 @@ export default function Process() {
 						{queries.queries.map((query, index) => (
 							<li key={`query-${index + 1}`}>
 								<span>{query.query}</span>
-								{/* {query.url && (
-									<span className="block">
-										<span className="italic">Source: </span>
-										<a
-											target="_blank"
-											href={query.url}
-											className="italic underline cursor-pointer"
-										>
-											{query.url}
-										</a>
-									</span>
-								)} */}
 							</li>
 						))}
 					</ol>
 					<h3>Reasoning for generating queries above</h3>
-					<Markdown rehypePlugins={[rehypeSlug]} remarkPlugins={[remarkGfm]}>{queries.explanation}</Markdown>
+					<Markdown rehypePlugins={[rehypeSlug]} remarkPlugins={[remarkGfm]}>
+						{queries.explanation}
+					</Markdown>
 					{error && (
 						<div>
 							<h3 className="text-red-500">Something went wrong:</h3>
 							<p>{error}</p>
 						</div>
 					)}
-					<h3>Sources</h3>
-					<ul className="flex flex-col">
-						{queries.queries.map(query => (
-							<li>
-								<a>{query.url}</a>
-							</li>
-						))}
-					</ul>
+					{queries.queries.some((q) => !!q.url) && (
+						<>
+							<h3>Sources</h3>
+							<ul className="flex flex-col">
+								{queries.queries.map((query) => (
+									<li key={query.id}>
+										<a target="_blank" href={query.url}>
+											{query.url}
+										</a>
+									</li>
+								))}
+							</ul>
+						</>
+					)}
 				</div>
 			)}
 		</div>

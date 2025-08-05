@@ -29,9 +29,9 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 	}, [updateStatus]);
 
 	useEffect(() => {
-		if (socket.connected) return
-		handleDisconnect()
-	}, [socket.connected])
+		if (socket.connected) return;
+		handleDisconnect();
+	}, [handleDisconnect]);
 
 	useEffect(() => {
 		socket.on("disconnect", handleDisconnect);
@@ -77,7 +77,7 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 		updateStatus,
 		setReport,
 		setError,
-		handleDisconnect
+		handleDisconnect,
 	]);
 
 	return (

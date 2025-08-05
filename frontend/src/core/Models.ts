@@ -36,10 +36,6 @@ export type GeneratedQueriesOutput = {
 	explanation: string;
 };
 
-// export type GeneratedQueryWithUrl = {
-// 	url: string
-// } & GeneratedQuery
-
 export type SearchResult = {
 	query_id: number;
 	url: string;
