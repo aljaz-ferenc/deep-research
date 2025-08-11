@@ -35,7 +35,7 @@ export default function Report({ className }: ReportProps) {
 				type="button"
 				variant="link"
 				onClick={reactToPrint}
-				className="cursor-pointer mb-10 mx-0 px-0"
+				className="cursor-pointer md:mb-10 mx-0 px-0"
 			>
 				Print to PDF
 			</Button>

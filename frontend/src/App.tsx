@@ -21,9 +21,12 @@ function App() {
 	const [currentTab, setCurrentTab] = useState(TabsEnum.USER_INPUT as string);
 
 	return (
-		<main className="max-w-6xl h-screen mx-auto prose prose-a:text-blue-500 py-16 flex flex-col">
-			<h1 className="mb-14">Deep Research</h1>
-			<div className="flex gap-10 flex-1 min-h-0">
+		<main className="max-w-6xl h-screen mx-auto prose prose-a:text-blue-500 p-5 md:py-16 flex flex-col prose-sm md:prose-base">
+			<h1 className="mb-5 md:mb-14 flex gap-2 items-center h-[2ex]">
+				Deep Research
+				<img src="/logo.png" className="h-full" alt="deep research" />
+			</h1>
+			<div className="flex flex-col md:flex-row gap-3 md:gap-10 flex-1 min-h-0">
 				<Status />
 				{status > Statuses.WAITING_CONNECTION && (
 					<Tabs
@@ -56,7 +59,7 @@ function App() {
 						</TabsList>
 
 						<TabsContent value={TabsEnum.USER_INPUT} className="flex-1 min-h-0">
-							<div className="w-full h-full border py-5 px-16 rounded">
+							<div className="w-full h-full border py-5 px-4 md:px-16 rounded">
 								<UserInput setCurrentTab={setCurrentTab} />
 							</div>
 						</TabsContent>
@@ -65,13 +68,13 @@ function App() {
 							value={TabsEnum.THINKING_PROCESS}
 							className="flex-1 min-h-0"
 						>
-							<div className="w-full h-full border py-5 px-16 rounded overflow-y-auto">
+							<div className="w-full h-full border py-5 px-4 md:px-16 rounded overflow-y-auto">
 								<Process />
 							</div>
 						</TabsContent>
 
 						<TabsContent value={TabsEnum.REPORT} className="flex-1 min-h-0">
-							<div className="w-full h-full border py-5 px-16 rounded overflow-y-auto">
+							<div className="w-full h-full border py-5 px-4 md:px-16 rounded overflow-y-auto">
 								<Report />
 							</div>
 						</TabsContent>

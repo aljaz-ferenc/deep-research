@@ -63,7 +63,7 @@ export default function UserInput({ setCurrentTab }: UserInputProps) {
 								<FormControl>
 									<Input
 										disabled={status > 1 && !error && status !== 6}
-										placeholder="e.g. What is the effect of flouride on humans?"
+										placeholder="e.g. Effect of flouride on humans?"
 										{...field}
 									/>
 								</FormControl>

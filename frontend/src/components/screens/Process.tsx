@@ -15,7 +15,7 @@ export default function Process() {
 			{status === Statuses.WAITING_CONNECTION && <div>Connecting...</div>}
 			{status === Statuses.GENERATING_QUERIES && <div>Thinking...</div>}
 			{queries && (
-				<div>
+				<div className="w-full">
 					<h3 className="mt-0">Generated queries</h3>
 					<ol>
 						{queries.queries.map((query, index) => (
