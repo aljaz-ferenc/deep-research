@@ -18,8 +18,11 @@ export default function Status() {
 
 	return (
 		<>
-			<div className="md:hidden">
-				{statuses[status as 1 | 2 | 3 | 4 | 5 | 6]}
+			<div className="md:hidden flex flex-col font-bold">
+				{status === 0 ? 'Connecting ...' : `${statuses[status as 1 | 2 | 3 | 4 | 5 | 6]}`}
+				<span className="font-bold italic text-xs">
+					{model.includes("/") ? model.split("/")[1] : model}
+				</span>
 			</div>
 			<div className="flex-col gap-8 min-w-max hidden md:flex">
 				{Object.entries(statuses).map(([num, text]) => {
