@@ -9,6 +9,7 @@ import { useShallow } from "zustand/react/shallow";
 import {
 	CustomEvents,
 	type GeneratedQueriesOutput,
+	type GuardrailDecision,
 	type SearchResult,
 	Statuses,
 } from "@/core/Models";
@@ -31,7 +32,7 @@ const socket = io(`${BASE_URL}/ws`, {
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {
-	const { setQueries, updateStatus, setUrlsToQueries, setReport, setError } =
+	const { setQueries, updateStatus, setUrlsToQueries, setReport, setError, setInputDecision } =
 		useResearchState(useShallow((state) => state));
 
 	const handleDisconnect = useCallback(() => {
@@ -77,6 +78,10 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 		socket.on(CustomEvents.ERROR, ({ error }: { error: string }) => {
 			setError(error);
 		});
+
+		socket.on(CustomEvents.GUARDRAIL_DECISION, (decision: GuardrailDecision) => {
+			setInputDecision(decision)
+		})
 
 		return () => {
 			socket.off("disconnect");

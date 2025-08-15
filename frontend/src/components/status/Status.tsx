@@ -6,11 +6,12 @@ import StatusIndicator from "./StatusIndicator";
 
 const statuses = {
 	1: "Connected",
-	2: "Generating Queries",
-	3: "Searching Web",
-	4: "Scraping Data",
-	5: "Generating Report",
-	6: "Complete",
+	2: "Verifying Input",
+	3: "Generating Queries",
+	4: "Searching Web",
+	5: "Scraping Data",
+	6: "Generating Report",
+	7: "Complete",
 } as const;
 
 export default function Status() {
@@ -19,7 +20,9 @@ export default function Status() {
 	return (
 		<>
 			<div className="md:hidden flex flex-col font-bold">
-				{status === 0 ? 'Connecting ...' : `${statuses[status as 1 | 2 | 3 | 4 | 5 | 6]}`}
+				{status === 0
+					? "Connecting ..."
+					: `${statuses[status as 1 | 2 | 3 | 4 | 5 | 6]}`}
 				<span className="font-bold italic text-xs">
 					{model.includes("/") ? model.split("/")[1] : model}
 				</span>

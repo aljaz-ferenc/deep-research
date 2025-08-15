@@ -1,19 +1,43 @@
+import { CheckSquare, SquareX } from "lucide-react";
 import Markdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { useShallow } from "zustand/react/shallow";
 import { Statuses } from "@/core/Models";
+import { cn } from "@/lib/utils";
 import { useResearchState } from "@/state/research.state";
 
 export default function Process() {
-	const { status, queries, error } = useResearchState(
+	const { status, queries, error, inputDecision } = useResearchState(
 		useShallow((state) => state),
 	);
 
 	return (
-		<div className="h-full w-full flex">
+		<div className="h-full w-full ">
 			{status === Statuses.WAITING_CONNECTION && <div>Connecting...</div>}
-			{status === Statuses.GENERATING_QUERIES && <div>Thinking...</div>}
+			{status === Statuses.VERIFYING_INPUT && !inputDecision && (
+				<div className="italic font-semibold">Thinking...</div>
+			)}
+			{inputDecision?.reasoning && (
+				<div>
+					<h3
+						className={cn([
+							"flex items-center gap-2",
+							inputDecision.is_input_valid ? "text-green-500" : "text-red-500",
+						])}
+					>
+						<span>
+							{inputDecision.is_input_valid ? <CheckSquare /> : <SquareX />}
+						</span>
+						{inputDecision.is_input_valid
+							? "Input Check Passed"
+							: "Input Invalid"}
+					</h3>
+					<Markdown rehypePlugins={[rehypeSlug]} remarkPlugins={[remarkGfm]}>
+						{inputDecision?.reasoning}
+					</Markdown>
+				</div>
+			)}
 			{queries && (
 				<div className="w-full">
 					<h3 className="mt-0">Generated queries</h3>

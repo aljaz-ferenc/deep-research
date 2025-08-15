@@ -4,7 +4,6 @@ from llm_agents.scraper import run_scraper, scraper
 from llm_agents.web_searcher import get_web_searcher_input, run_web_search, web_searcher
 from models import CustomEvents, Statuses
 from llm_agents.queries_generator import (
-    GeneratedQueriesOutput,
     queries_generator,
     run_queires_generator,
 )
@@ -57,12 +56,13 @@ async def update_status(status: Statuses, sid: str, model: str):
 async def start_research(sid, query, language="English"):
     try:
         with trace("Deep Research"):
-
+            ctx = {"sid": sid, "sio":sio}
+            
             # generate queries
             await update_status(
-                Statuses.GENERATING_QUERIES, sid, queries_generator.model.model
+                Statuses.VERIFYING_INPUT, sid, queries_generator.model.model
             )
-            queries_output = await run_queires_generator(query)
+            queries_output = await run_queires_generator(query, context=ctx)
             await sio.emit(
                 CustomEvents.QUERIES_GENERATED.value,
                 {

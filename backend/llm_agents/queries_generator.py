@@ -1,5 +1,6 @@
 from agents import Agent, Runner
 import os
+from llm_agents.input_guardrail import input_guardrail_function
 from pydantic import BaseModel
 from agents.extensions.models.litellm_model import LitellmModel
 
@@ -32,13 +33,14 @@ queries_generator = Agent(
     ),
     instructions=instructions,
     output_type=GeneratedQueriesOutput,
+    input_guardrails=[input_guardrail_function]
 )
 
 
-async def run_queires_generator(original_query: str):
+async def run_queires_generator(original_query: str, context=None):
     try:
         generated_queries_result = await Runner.run(
-            queries_generator, input=original_query
+            queries_generator, input=original_query, context=context
         )
         output: GeneratedQueriesOutput = generated_queries_result.final_output
         return output

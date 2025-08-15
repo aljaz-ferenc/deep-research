@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
 	type GeneratedQueriesOutput,
+	type GuardrailDecision,
 	type SearchResult,
 	Statuses,
 } from "@/core/Models";
@@ -12,12 +13,14 @@ type ResearchStore = {
 	report: string;
 	model: string;
 	error: string;
+	inputDecision: GuardrailDecision | null,
 	updateStatus: (status: Statuses, model: string) => void;
 	setQueries: (queries: GeneratedQueriesOutput) => void;
 	setUrlsToQueries: (searchResults: SearchResult[]) => void;
 	setReport: (report: string) => void;
 	resetStore: () => void;
 	setError: (error: string) => void;
+	setInputDecision: (inputDecision: GuardrailDecision) => void
 };
 
 export const useResearchState = create<ResearchStore>()(
@@ -28,6 +31,7 @@ export const useResearchState = create<ResearchStore>()(
 			report: "",
 			model: "",
 			error: "",
+			inputDecision: null,
 			updateStatus: (status, model) => set({ status, model }),
 			setQueries: (queries) => set({ queries }),
 			setUrlsToQueries: (searchResults) => {
@@ -58,8 +62,10 @@ export const useResearchState = create<ResearchStore>()(
 					report: "",
 					model: "",
 					error: "",
+					inputDecision: null
 				}),
 			setError: (error) => set({ error }),
+			setInputDecision: (inputDecision) => set({inputDecision}),
 		}),
 		{
 			name: "research-storage",

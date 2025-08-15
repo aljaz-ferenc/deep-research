@@ -62,7 +62,7 @@ export default function UserInput({ setCurrentTab }: UserInputProps) {
 								</FormLabel>
 								<FormControl>
 									<Input
-										disabled={status > 1 && !error && status !== 6}
+										disabled={status > 1 && !error && status !== 7}
 										placeholder="e.g. Effect of flouride on humans?"
 										{...field}
 									/>
@@ -73,7 +73,7 @@ export default function UserInput({ setCurrentTab }: UserInputProps) {
 					/>
 					<Button
 						type="submit"
-						disabled={status > 1 && !error && status !== 6}
+						disabled={status > 1 && !error && status !== 7}
 						className="cursor-pointer self-start mt-10"
 					>
 						Start Research
