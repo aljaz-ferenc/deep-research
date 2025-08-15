@@ -6,3 +6,8 @@
 [build.environment]
   NPM_FLAGS = "--version"
   NETLIFY_USE_PNPM = "true"
+
+  [[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
