@@ -7,7 +7,7 @@
   NPM_FLAGS = "--version"
   NETLIFY_USE_PNPM = "true"
 
-  [[redirects]]
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
