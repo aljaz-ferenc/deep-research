@@ -29,7 +29,7 @@ instructions = (
 queries_generator = Agent(
     name="Queries Generator",
     model=LitellmModel(
-        model="gemini/gemini-2.5-flash", api_key=os.getenv("GEMINI_API_KEY")
+        model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY")
     ),
     instructions=instructions,
     output_type=GeneratedQueriesOutput,

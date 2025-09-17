@@ -41,7 +41,7 @@ guardrail_agent = Agent(
     name="Input Guardrail",
     instructions=instructions,
     model=LitellmModel(
-        model="gemini/gemini-2.5-flash", api_key=os.getenv("GEMINI_API_KEY")
+        model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY")
     ),
     output_type=GuardrailOutput
 )
