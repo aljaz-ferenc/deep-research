@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import ReportListItem, {
 	ReportListItemSkeleton,
-} from "@/components/ReportListItem.tsx";
+} from "@/components/routes/reports/ReportListItem.tsx";
 import useReports from "@/hooks/api/useReports.ts";
 
 export default function ReportsRoute() {

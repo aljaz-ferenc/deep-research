@@ -1,4 +1,5 @@
 import { NavLink } from "react-router";
+import { buttonVariants } from "@/components/ui/AppButton.tsx";
 
 const LINKS = [{ label: "Reports", href: "/reports" }];
 
@@ -20,7 +21,7 @@ export default function Header() {
 							<NavLink
 								to="/"
 								type="button"
-								className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors hidden sm:block"
+								className={buttonVariants({ intent: "primary" })}
 							>
 								New Report
 							</NavLink>

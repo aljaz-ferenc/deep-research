@@ -12,6 +12,7 @@ import { Link } from "react-router";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { useShallow } from "zustand/react/shallow";
+import { buttonVariants } from "@/components/ui/AppButton.tsx";
 import { type GeneratedQueriesOutput, Statuses } from "@/core/Models.ts";
 import { STEPS, type Step } from "@/data/steps.tsx";
 import { cn } from "@/lib/utils.ts";
@@ -95,7 +96,7 @@ export function StepItem({ step }: StepItemProps) {
 							}}
 							to={`/reports/${reportId}`}
 							type="button"
-							className="cursor-pointer inline-flex items-center justify-center mt-5 gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all text-sm"
+							className={buttonVariants({ intent: "primary" })}
 						>
 							<span>View Report</span>
 							<span className="material-symbols-outlined text-base">

@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router";
+import { buttonVariants } from "@/components/ui/AppButton.tsx";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -32,11 +33,11 @@ export default function ReportListItem({ report }: ReportListItemProps) {
 					<Link
 						to={`/reports/${report._id}`}
 						type="button"
-						className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all text-sm"
+						className={buttonVariants({ intent: "outline" })}
 					>
 						<span>View Report</span>
 						<span className="material-symbols-outlined text-base">
-							<ArrowRight />
+							<ArrowRight size={15} />
 						</span>
 					</Link>
 				</div>

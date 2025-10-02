@@ -3,6 +3,7 @@ import { use } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { useShallow } from "zustand/react/shallow";
+import { AppButton } from "@/components/ui/AppButton.tsx";
 import {
 	Form,
 	FormControl,
@@ -72,12 +73,9 @@ export default function UserInputScreen() {
 									</FormItem>
 								)}
 							/>
-							<button
-								className="bg-primary text-white px-8 py-3 rounded-lg text-base font-semibold hover:bg-primary/90 transition-colors flex-shrink-0"
-								type="submit"
-							>
+							<AppButton type="submit" intent={"primary"}>
 								Start Research
-							</button>
+							</AppButton>
 						</form>
 					</Form>
 				</div>
