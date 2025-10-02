@@ -1,7 +1,4 @@
-const BASE_URL =
-	import.meta.env.NODE_ENV === "production"
-		? import.meta.env.VITE_BASE_URL
-		: import.meta.env.VITE_BASE_URL_DEV;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 if (!BASE_URL) {
 	throw new Error("Missing VITE_BASE_URL in .env");
