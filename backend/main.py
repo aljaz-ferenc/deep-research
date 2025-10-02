@@ -71,6 +71,20 @@ async def get_report(reportId: str):
     report["_id"] = str(report["_id"])
     return report
 
+@app.delete("/api/v1/reports/{reportId}")
+async def delete_report(reportId: str):
+    try:
+        oid = ObjectId(reportId)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid report ID")
+
+    result = collection.delete_one({"_id": oid})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    return {"message": "Report deleted successfully", "reportId": reportId}
+
 
 @sio.on("connect", namespace="/ws")
 async def connect(sid, environ):

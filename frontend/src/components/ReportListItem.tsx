@@ -1,34 +1,52 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router";
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuTrigger,
+} from "@/components/ui/context-menu.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import type { Report } from "@/core/Models.ts";
+import useDeleteReport from "@/hooks/api/useDeleteReport.ts";
+import { cn } from "@/lib/utils.ts";
 
 type ReportListItemProps = {
 	report: Report;
 };
 
 export default function ReportListItem({ report }: ReportListItemProps) {
+	const { mutateAsync: deleteReport, isPending } = useDeleteReport();
 	return (
-		<div className="flex items-center gap-4 p-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-			<div className="flex-grow">
-				<p className="font-medium text-zinc-900 dark:text-white">
-					{report.title}
-				</p>
-				<p className="text-sm text-zinc-500 dark:text-zinc-400">
-					Generated on: {new Date(report.createdAt).toLocaleDateString()}
-				</p>
-			</div>
-			<Link
-				to={`/reports/${report._id}`}
-				type="button"
-				className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all text-sm"
-			>
-				<span>View Report</span>
-				<span className="material-symbols-outlined text-base">
-					<ArrowRight />
-				</span>
-			</Link>
-		</div>
+		<ContextMenu>
+			<ContextMenuTrigger className={cn([isPending && "opacity-25"])}>
+				<div className="flex items-center gap-4 p-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+					<div className="flex-grow">
+						<p className="font-medium text-zinc-900 dark:text-white">
+							{report.title}
+						</p>
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">
+							Generated on: {new Date(report.createdAt).toLocaleDateString()}
+						</p>
+					</div>
+					<Link
+						to={`/reports/${report._id}`}
+						type="button"
+						className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all text-sm"
+					>
+						<span>View Report</span>
+						<span className="material-symbols-outlined text-base">
+							<ArrowRight />
+						</span>
+					</Link>
+				</div>
+			</ContextMenuTrigger>
+			<ContextMenuContent>
+				<ContextMenuItem onClick={() => deleteReport(report._id)}>
+					Delete
+				</ContextMenuItem>
+			</ContextMenuContent>
+		</ContextMenu>
 	);
 }
 
