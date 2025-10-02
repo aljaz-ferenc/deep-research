@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const querySchema = z.string().min(3, {
-	message: "Min 3 characters",
+	message: "Please ender at least 3 characters.",
 });
 
 export type Query = z.infer<typeof querySchema>;
@@ -13,7 +13,7 @@ export enum CustomEvents {
 	URLS_GENERATED = "urls-generated",
 	REPORT_GENERATED = "report-generated",
 	ERROR = "error",
-	GUARDRAIL_DECISION="guardrail-decision"
+	GUARDRAIL_DECISION = "guardrail-decision",
 }
 
 export enum Statuses {
@@ -44,6 +44,13 @@ export type SearchResult = {
 };
 
 export type GuardrailDecision = {
-	is_input_valid: boolean
-	reasoning: string
-}
+	is_input_valid: boolean;
+	reasoning: string;
+};
+
+export type Report = {
+	_id: string;
+	markdown: string;
+	title: string;
+	createdAt: Date;
+};

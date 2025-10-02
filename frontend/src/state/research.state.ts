@@ -10,17 +10,17 @@ import {
 type ResearchStore = {
 	status: Statuses;
 	queries: GeneratedQueriesOutput | null;
-	report: string;
+	reportId: string | null;
 	model: string;
 	error: string;
-	inputDecision: GuardrailDecision | null,
+	inputDecision: GuardrailDecision | null;
 	updateStatus: (status: Statuses, model: string) => void;
 	setQueries: (queries: GeneratedQueriesOutput) => void;
 	setUrlsToQueries: (searchResults: SearchResult[]) => void;
-	setReport: (report: string) => void;
+	setReport: (reportId: string) => void;
 	resetStore: () => void;
 	setError: (error: string) => void;
-	setInputDecision: (inputDecision: GuardrailDecision) => void
+	setInputDecision: (inputDecision: GuardrailDecision) => void;
 };
 
 export const useResearchState = create<ResearchStore>()(
@@ -28,7 +28,7 @@ export const useResearchState = create<ResearchStore>()(
 		(set, getState) => ({
 			status: Statuses.WAITING_CONNECTION,
 			queries: null,
-			report: "",
+			reportId: null,
 			model: "",
 			error: "",
 			inputDecision: null,
@@ -53,19 +53,19 @@ export const useResearchState = create<ResearchStore>()(
 					};
 				});
 			},
-			setReport: (report) => set({ report }),
+			setReport: (reportId) => set({ reportId }),
 			resetStore: () =>
 				set({
 					...getState(),
 					status: Statuses.READY,
 					queries: null,
-					report: "",
+					reportId: null,
 					model: "",
 					error: "",
-					inputDecision: null
+					inputDecision: null,
 				}),
 			setError: (error) => set({ error }),
-			setInputDecision: (inputDecision) => set({inputDecision}),
+			setInputDecision: (inputDecision) => set({ inputDecision }),
 		}),
 		{
 			name: "research-storage",

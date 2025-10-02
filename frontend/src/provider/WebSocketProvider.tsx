@@ -32,8 +32,14 @@ const socket = io(`${BASE_URL}/ws`, {
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {
-	const { setQueries, updateStatus, setUrlsToQueries, setReport, setError, setInputDecision } =
-		useResearchState(useShallow((state) => state));
+	const {
+		setQueries,
+		updateStatus,
+		setUrlsToQueries,
+		setReport,
+		setError,
+		setInputDecision,
+	} = useResearchState(useShallow((state) => state));
 
 	const handleDisconnect = useCallback(() => {
 		updateStatus(Statuses.WAITING_CONNECTION, "");
@@ -70,8 +76,8 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 
 		socket.on(
 			CustomEvents.REPORT_GENERATED,
-			({ report }: { report: string }) => {
-				setReport(report);
+			({ reportId }: { reportId: string }) => {
+				setReport(reportId);
 			},
 		);
 
@@ -79,9 +85,12 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 			setError(error);
 		});
 
-		socket.on(CustomEvents.GUARDRAIL_DECISION, (decision: GuardrailDecision) => {
-			setInputDecision(decision)
-		})
+		socket.on(
+			CustomEvents.GUARDRAIL_DECISION,
+			(decision: GuardrailDecision) => {
+				setInputDecision(decision);
+			},
+		);
 
 		return () => {
 			socket.off("disconnect");
@@ -90,9 +99,10 @@ export default function WebSocketProvider({ children }: PropsWithChildren) {
 		setQueries,
 		setUrlsToQueries,
 		updateStatus,
-		setReport,
 		setError,
 		handleDisconnect,
+		setInputDecision,
+		setReport,
 	]);
 
 	return (

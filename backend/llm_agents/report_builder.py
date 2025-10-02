@@ -1,8 +1,14 @@
 from agents import Agent, Runner
 from agents.extensions.models.litellm_model import LitellmModel
 import os
+from pydantic import BaseModel, Field
+
 
 WORD_COUNT = int(os.getenv("REPORT_WORD_COUNT"))
+
+class Report(BaseModel):
+    markdown: str = Field(description="The final report content in markdown format.")
+    title: str = Field(description="Title of the report")
 
 instructions = (
     "You are a research report writer. You will receive an original query from the user followed by multiple summaries "
@@ -11,7 +17,13 @@ instructions = (
     "The report should be well-structured, informative, and directly answer the original query. "
     "Focus on providing actionable insights and practical information. "
     f"Aim for up to {WORD_COUNT} words with clear sections and a conclusion. "
-    "Important: Use markdown formatting. Have a table of contents in the beginning of the report that links to each section."
+    "IMPORTANT: Return your response as JSON in the following format exactly:\n"
+    "{\n"
+    '  "title": "A concise title for the report",\n'
+    '  "markdown": "The full report content in markdown format."\n'
+    "}\n"
+    "Do not include any additional text outside this JSON."
+    "Important: For 'markdown' use markdown formatting. Have a table of contents in the beginning of the report that links to each section."
     "Try and include in-text citations to the sources used to create the report with a source list at the end of the report."
     "When writing sources under References, format them as a numbered list starting at 1. Always start numbering from 1. Do not add words like 'Source' or bold formatting. These will be rendered with a Markdown parser "
     "Format all headings (e.g. `#`, `##`, `###`) without including explicit ID anchors like `{#heading-id}`. "
@@ -24,6 +36,7 @@ instructions = (
 report_builder = Agent(
     name="Report Builder",
     instructions=instructions,
+    output_type=Report,
     model=LitellmModel(
         model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY")
     ),
