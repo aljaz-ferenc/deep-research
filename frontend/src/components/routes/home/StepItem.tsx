@@ -1,19 +1,14 @@
-import {
-	ArrowRight,
-	Check,
-	CircleAlert,
-	CircleQuestionMark,
-	Flag,
-	Link2,
-} from "lucide-react";
-import type { PropsWithChildren } from "react";
+import { ArrowRight, Check, CircleAlert, Flag, Link2 } from "lucide-react";
 import Markdown from "react-markdown";
 import { Link } from "react-router";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { useShallow } from "zustand/react/shallow";
+import FeedbackContainer from "@/components/routes/home/FeedbackContainer.tsx";
+import GeneratedQueries from "@/components/routes/home/GeneratedQueries.tsx";
 import { buttonVariants } from "@/components/ui/AppButton.tsx";
-import { type GeneratedQueriesOutput, Statuses } from "@/core/Models.ts";
+import StepSpinner from "@/components/ui/StepSpinner.tsx";
+import { Statuses } from "@/core/Models.ts";
 import { STEPS, type Step } from "@/data/steps.tsx";
 import { cn } from "@/lib/utils.ts";
 import { useResearchState } from "@/state/research.state.ts";
@@ -177,114 +172,5 @@ export function StepItem({ step }: StepItemProps) {
 					)}
 			</div>
 		</>
-	);
-}
-
-function FeedbackContainer({
-	children,
-	isError = false,
-}: PropsWithChildren<{ isError?: boolean }>) {
-	return (
-		<div
-			className={cn([
-				"mt-4 rounded-lg bg-background-dark/5 dark:bg-background-light/5 p-4",
-				isError && "bg-destructive/10",
-			])}
-		>
-			{children}
-		</div>
-	);
-}
-
-function GeneratedQueries({
-	queriesOutput,
-}: {
-	queriesOutput: GeneratedQueriesOutput;
-}) {
-	return (
-		<>
-			<div>
-				<h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-					Agent Feedback
-				</h3>
-				<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-					{queriesOutput.explanation}
-				</p>
-			</div>
-			<hr className="my-3" />
-			<div>
-				<h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-					Generated Queries
-				</h3>
-				<ul className="mt-2 space-y-2 text-sm text-gray-600 dark:text-gray-400">
-					{queriesOutput.queries.map((query) => (
-						<li className="flex gap-3 items-center" key={query.id}>
-							<CircleQuestionMark size={15} className="min-w-[15px]" />
-							<span className="">{query.query}</span>
-						</li>
-					))}
-				</ul>
-			</div>
-		</>
-	);
-}
-
-export function StepSpinner() {
-	return (
-		<div className="flex size-10 items-center justify-center rounded-full bg-primary ring-4 ring-primary/20 text-white">
-			{/** biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-			<svg
-				className="animate-spin h-6 w-6 text-white"
-				fill="none"
-				viewBox="0 0 24 24"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<title aria-hidden></title>
-				<circle
-					className="opacity-25"
-					cx="12"
-					cy="12"
-					r="10"
-					stroke="currentColor"
-					stroke-width="4"
-				></circle>
-				<path
-					className="opacity-75"
-					d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-					fill="currentColor"
-				></path>
-			</svg>
-		</div>
-	);
-}
-
-export function PageSpinner() {
-	return (
-		<div className="absolute  inset-0 z-10 flex flex-col items-center justify-center  dark:bg-background-dark/80 backdrop-blur-sm">
-			{/** biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-			<svg
-				className="h-16 w-16 animate-spin text-primary"
-				fill="none"
-				viewBox="0 0 24 24"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<circle
-					className="opacity-25"
-					cx="12"
-					cy="12"
-					r="10"
-					stroke="currentColor"
-					stroke-width="4"
-				></circle>
-				<path
-					className="opacity-75"
-					d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-					fill="currentColor"
-				></path>
-			</svg>
-			<p className="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-300">
-				Generating Report...
-			</p>
-		</div>
 	);
 }

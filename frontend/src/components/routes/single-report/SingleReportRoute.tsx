@@ -2,7 +2,7 @@ import { useRef } from "react";
 import Markdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import { PageSpinner } from "@/components/routes/home/StepItem.tsx";
+import PageSpinner from "@/components/ui/PageSpinner.tsx";
 import useReport from "@/hooks/api/useReport.ts";
 
 export default function SingleReportRoute() {
