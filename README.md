@@ -15,8 +15,6 @@ An AI-powered tool that generates comprehensive research reports from a single u
 
 - **Structured, High-Quality Reports** – Synthesized and formatted for readability and clarity.
 
-- **Modern Frontend Experience** – Built with React, TailwindCSS, and Shadcn for a clean and responsive UI.
-
 
 ## How it Works
 The user provides a topic or concept to research. Their input is passed through a series of **AI Agents**, each with its own role, instructions on which **LLM** to use, and the **expected output format**:
