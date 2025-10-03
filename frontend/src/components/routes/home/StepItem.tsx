@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { useShallow } from "zustand/react/shallow";
 import FeedbackContainer from "@/components/routes/home/FeedbackContainer.tsx";
 import GeneratedQueries from "@/components/routes/home/GeneratedQueries.tsx";
-import { buttonVariants } from "@/components/ui/AppButton.tsx";
+import { AppButton, buttonVariants } from "@/components/ui/AppButton.tsx";
 import StepSpinner from "@/components/ui/StepSpinner.tsx";
 import { Statuses } from "@/core/Models.ts";
 import { STEPS, type Step } from "@/data/steps.tsx";
@@ -125,6 +125,15 @@ export function StepItem({ step }: StepItemProps) {
 									>
 										{inputDecision?.reasoning}
 									</Markdown>
+									<AppButton
+										onClick={resetStore}
+										className={cn([
+											buttonVariants({ intent: "outline" }),
+											"text-sm mt-2",
+										])}
+									>
+										Try Again
+									</AppButton>
 								</>
 							) : (
 								<>
@@ -132,6 +141,15 @@ export function StepItem({ step }: StepItemProps) {
 										Error
 									</h3>
 									<p className="mt-1 text-sm text-destructive/90">{error}</p>
+                                    <AppButton
+                                        onClick={resetStore}
+                                        className={cn([
+                                            buttonVariants({ intent: "outline" }),
+                                            "text-sm mt-2",
+                                        ])}
+                                    >
+                                        Try Again
+                                    </AppButton>
 								</>
 							)}
 						</div>
