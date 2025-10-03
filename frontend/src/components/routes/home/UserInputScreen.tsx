@@ -64,28 +64,30 @@ export default function UserInputScreen() {
 								name="query"
 								render={({ field }) => (
 									<FormItem className="relative w-full">
-										<FormControl>
-											<Input
-												className="w-full h-full px-5 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-background-dark focus:ring-2 focus:!ring-primary/20 focus:border-primary transition-colors placeholder-gray-500 dark:placeholder-gray-400"
-												id="topic-input"
-												placeholder="e.g., 'The future of renewable energy'"
-												type="text"
-												{...field}
-											/>
-										</FormControl>
+										<div className="flex gap-2">
+											<FormControl>
+												<Input
+													className="w-full h-full px-5 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-background-dark focus:ring-2 focus:!ring-primary/20 focus:border-primary transition-colors placeholder-gray-500 dark:placeholder-gray-400"
+													id="topic-input"
+													placeholder="e.g., 'The future of renewable energy'"
+													type="text"
+													{...field}
+												/>
+											</FormControl>
+											{data && (
+												<AppButton
+													disabled={data.used >= data.limit}
+													type="submit"
+													intent={"primary"}
+												>
+													Start Research
+												</AppButton>
+											)}
+										</div>
 										<FormMessage className="justify-self-start" />
 									</FormItem>
 								)}
 							/>
-							{data && (
-								<AppButton
-									disabled={data.used >= data.limit}
-									type="submit"
-									intent={"primary"}
-								>
-									Start Research
-								</AppButton>
-							)}
 						</form>
 					</Form>
 					{data && (

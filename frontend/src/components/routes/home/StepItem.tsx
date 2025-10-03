@@ -102,8 +102,38 @@ export function StepItem({ step }: StepItemProps) {
 				{error && status === step.status && (
 					<FeedbackContainer isError>
 						<div>
-							<h3 className="text-sm font-semibold text-destructive">Error</h3>
-							<p className="mt-1 text-sm text-destructive/90">{error}</p>
+							{status === Statuses.VERIFYING_INPUT &&
+							!inputDecision?.is_input_valid ? (
+								<>
+									<h3 className="text-sm font-semibold text-destructive">
+										Input Rejected
+									</h3>
+									<Markdown
+										remarkPlugins={[remarkGfm]}
+										rehypePlugins={[rehypeSlug]}
+										components={{
+											p: ({ ...props }) => (
+												<p
+													className="mt-1 text-sm text-destructive/80"
+													{...props}
+												/>
+											),
+											strong: ({ ...props }) => (
+												<strong {...props} className="text-destructive" />
+											),
+										}}
+									>
+										{inputDecision?.reasoning}
+									</Markdown>
+								</>
+							) : (
+								<>
+									<h3 className="text-sm font-semibold text-destructive">
+										Error
+									</h3>
+									<p className="mt-1 text-sm text-destructive/90">{error}</p>
+								</>
+							)}
 						</div>
 					</FeedbackContainer>
 				)}
