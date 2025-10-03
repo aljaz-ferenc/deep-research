@@ -5,9 +5,18 @@ import ReportListItem, {
 import PageSpinner from "@/components/ui/PageSpinner.tsx";
 import ServerError from "@/components/ui/ServerError.tsx";
 import useReports from "@/hooks/api/useReports.ts";
+import {useEffect, useState} from "react";
+import {useDebounce} from "@/hooks/useDebounce.ts";
 
 export default function ReportsRoute() {
 	const { data: reports, isLoading, isError } = useReports();
+    const [search, setSearch] = useState('')
+    const debouncedSearch = useDebounce(search, 300)
+    const [filter, setFilter] = useState('')
+
+    useEffect(() => {
+        setFilter(debouncedSearch);
+    }, [debouncedSearch]);
 
 	if (isLoading) {
 		return <PageSpinner />;
@@ -33,6 +42,8 @@ export default function ReportsRoute() {
 						<div className="relative flex-grow">
 							<Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-zinc-400" />
 							<input
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
 								className="pl-10 pr-4 py-3 w-full rounded-lg bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
 								placeholder="Search reports by topic..."
 								type="search"
@@ -50,7 +61,7 @@ export default function ReportsRoute() {
 								))}
 							{!isLoading &&
 								reports &&
-								reports.map((report) => (
+								reports.filter(r => r.title.toLocaleLowerCase().includes(filter.toLocaleLowerCase())).map((report) => (
 									<ReportListItem key={report.title} report={report} />
 								))}
 						</div>
