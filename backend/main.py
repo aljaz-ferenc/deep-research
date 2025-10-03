@@ -22,6 +22,8 @@ load_dotenv()
 
 # uv run python -m uvicorn main:app --reload
 
+DAILY_LIMIT = 3
+
 ORIGIN_URL=os.getenv("ORIGIN_URL")
 MONGO_URI=os.getenv("MONGO_URI")
 
@@ -44,18 +46,64 @@ socket_app = socketio.ASGIApp(sio, socketio_path="/ws/socket.io")
 app.mount("/ws", socket_app)
 
 
+async def check_daily_limit(sid: str) -> bool:
+    now = datetime.now(timezone.utc)
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    try:
+        count_today = collection.count_documents({"createdAt": {"$gte": start_of_day}})
+        if count_today >= DAILY_LIMIT:
+            await sio.emit(
+                CustomEvents.ERROR.value,
+                {"error": "Daily report limit reached"},
+                namespace="/ws",
+                to=sid
+            )
+            return False
+        return True
+    except Exception:
+        await sio.emit(
+            CustomEvents.ERROR.value,
+            {"error": "Could not get report count"},
+            namespace="/ws",
+            to=sid
+        )
+        return False
+
+
 @app.get("/api/v1/hello")
 async def hello():
     return {"message": "hello world"}
 
 @app.get("/api/v1/reports")
 async def get_reports():
-    cursor = collection.find({})
-    reports = []
-    for r in cursor:
-        r["_id"] = str(r["_id"]) 
-        reports.append(r)
-    return reports
+    try:
+        cursor = collection.find({})
+        reports = []
+        for r in cursor:
+            r["_id"] = str(r["_id"]) 
+            reports.append(r)
+        return reports
+    except Exception:
+        raise HTTPException(status_code=500, detail="Could not get reports")
+
+
+@app.get("/api/v1/reports/limit")
+async def get_report_limit():
+    now = datetime.now(timezone.utc)
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    try:
+        count_today = collection.count_documents({
+            "createdAt": {"$gte": start_of_day}
+        })
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=f'Could not count reports. {err}')
+
+    return {
+        "limit": DAILY_LIMIT,
+        "used": count_today,
+        "remaining": max(0, DAILY_LIMIT - count_today)
+    }
 
 @app.get("/api/v1/reports/{reportId}")
 async def get_report(reportId: str):
@@ -108,6 +156,10 @@ async def update_status(status: Statuses, sid: str, model: str):
 
 @sio.on(CustomEvents.QUERY.value, namespace="/ws")
 async def start_research(sid, query, language="English"):
+
+    if not await check_daily_limit(sid):
+        return
+
     try:
         with trace("Deep Research"):
             ctx = {"sid": sid, "sio":sio}
