@@ -3,22 +3,27 @@ import Markdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import PageSpinner from "@/components/ui/PageSpinner.tsx";
+import ReportNotFound from "@/components/ui/ReportNotFound.tsx";
+import ServerError from "@/components/ui/ServerError.tsx";
 import useReport from "@/hooks/api/useReport.ts";
 
 export default function SingleReportRoute() {
-	const { data: report, isLoading, isError } = useReport();
+	const { data: report, isLoading, isError, error } = useReport();
 	const reportRef = useRef<HTMLDivElement>(null);
-
-	if (isError) {
-		return <div>Error...</div>;
-	}
 
 	if (isLoading) {
 		return <PageSpinner />;
 	}
 
-	if (!report) {
-		return <div>Error...</div>;
+	if (isError || !report) {
+		console.log(error);
+		if (
+			error?.message.includes("Invalid report ID") ||
+			error?.message.includes("Report not found")
+		) {
+			return <ReportNotFound />;
+		}
+		return <ServerError />;
 	}
 
 	return (

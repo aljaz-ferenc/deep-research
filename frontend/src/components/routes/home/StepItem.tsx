@@ -91,7 +91,7 @@ export function StepItem({ step }: StepItemProps) {
 							}}
 							to={`/reports/${reportId}`}
 							type="button"
-							className={buttonVariants({ intent: "primary" })}
+							className={cn([buttonVariants({ intent: "primary" }), "mt-2"])}
 						>
 							<span>View Report</span>
 							<span className="material-symbols-outlined text-base">

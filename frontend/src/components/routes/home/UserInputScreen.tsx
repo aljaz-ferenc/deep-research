@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { querySchema } from "@/core/Models.ts";
+import { useReportLimit } from "@/hooks/api/useReportLimit.ts";
 import { WebSocketContext } from "@/provider/WebSocketProvider.tsx";
 import { useResearchState } from "@/state/research.state.ts";
 
@@ -23,6 +24,9 @@ const startResearchFormSchema = z.object({
 export default function UserInputScreen() {
 	const socket = use(WebSocketContext);
 	const { resetStore } = useResearchState(useShallow((state) => state));
+	const { data, error } = useReportLimit();
+	console.log(data);
+	console.log(error);
 
 	const startResearchForm = useForm<z.infer<typeof startResearchFormSchema>>({
 		resolver: zodResolver(startResearchFormSchema),
@@ -73,11 +77,34 @@ export default function UserInputScreen() {
 									</FormItem>
 								)}
 							/>
-							<AppButton type="submit" intent={"primary"}>
-								Start Research
-							</AppButton>
+							{data && (
+								<AppButton
+									disabled={data.used >= data.limit}
+									type="submit"
+									intent={"primary"}
+								>
+									Start Research
+								</AppButton>
+							)}
 						</form>
 					</Form>
+					{data && (
+						<div>
+							{data && data.remaining > 0 ? (
+								<p className="text-muted-foreground mt-2">
+									You have{" "}
+									<strong className="text-white">{data.remaining}</strong>{" "}
+									reports remaining for today.
+								</p>
+							) : (
+								<p className="text-destructive/80 mt-2">
+									You have reached the limit of
+									<strong className="text-destructive"> {data.limit}</strong>{" "}
+									report generations today.
+								</p>
+							)}
+						</div>
+					)}
 				</div>
 			</div>
 		</main>

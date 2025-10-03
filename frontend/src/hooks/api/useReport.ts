@@ -5,8 +5,10 @@ import type { Report } from "@/core/Models.ts";
 
 async function fetchReport(reportId: string): Promise<Report> {
 	const res = await fetch(`${Endpoints.reports}/${reportId}`);
+
 	if (!res.ok) {
-		throw new Error("Could not get reports.");
+		const errData = await res.json().catch(() => null);
+		throw new Error(errData?.detail || "Unknown server error");
 	}
 	const data: Report = await res.json();
 	return data;
@@ -14,9 +16,10 @@ async function fetchReport(reportId: string): Promise<Report> {
 
 export default function useReport() {
 	const { reportId } = useParams();
-	return useQuery<Report>({
+	return useQuery<Report, Error>({
 		queryKey: ["reports", { reportId }],
 		queryFn: async () => await fetchReport(reportId as string),
 		enabled: !!reportId,
+		retry: false,
 	});
 }

@@ -36,9 +36,7 @@ export default function ReportListItem({ report }: ReportListItemProps) {
 						className={buttonVariants({ intent: "outline" })}
 					>
 						<span>View Report</span>
-						<span className="material-symbols-outlined text-base">
-							<ArrowRight size={15} />
-						</span>
+						<ArrowRight size={15} />
 					</Link>
 				</div>
 			</ContextMenuTrigger>

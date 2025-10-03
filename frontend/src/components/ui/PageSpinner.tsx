@@ -1,7 +1,7 @@
 export default function PageSpinner() {
 	return (
 		<div className="absolute  inset-0 z-10 flex flex-col items-center justify-center  dark:bg-background-dark/80 backdrop-blur-sm">
-			{/** biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+			{/** biome-ignore lint/a11y/noSvgWithoutTitle: explanation */}
 			<svg
 				className="h-16 w-16 animate-spin text-primary"
 				fill="none"

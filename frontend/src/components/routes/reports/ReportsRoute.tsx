@@ -2,13 +2,19 @@ import { Search } from "lucide-react";
 import ReportListItem, {
 	ReportListItemSkeleton,
 } from "@/components/routes/reports/ReportListItem.tsx";
+import PageSpinner from "@/components/ui/PageSpinner.tsx";
+import ServerError from "@/components/ui/ServerError.tsx";
 import useReports from "@/hooks/api/useReports.ts";
 
 export default function ReportsRoute() {
-	const { data: reports, isLoading, isError, error } = useReports();
+	const { data: reports, isLoading, isError } = useReports();
 
-	if (isError) {
-		return <div>Error: {JSON.stringify(error)}</div>;
+	if (isLoading) {
+		return <PageSpinner />;
+	}
+
+	if (isError || !reports) {
+		return <ServerError />;
 	}
 
 	return (
