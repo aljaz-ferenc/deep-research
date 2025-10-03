@@ -15,15 +15,11 @@ An AI-powered tool that generates comprehensive research reports from a single u
 
 - **Structured, High-Quality Reports** – Synthesized and formatted for readability and clarity.
 
-- **PDF Export** – Generate a print-ready version of the research report.
-
 - **Modern Frontend Experience** – Built with React, TailwindCSS, and Shadcn for a clean and responsive UI.
-
-- **Robust Validation & State Management** – Uses react-hook-form, Zod, and Zustand for reliable form handling and global state.
 
 
 ## How it Works
-The user provides a topic or concept to research. Their input is passed through a series of **AI Agents**, each with its own role, instructions on which **LLM** to use, and the **expected data format**:
+The user provides a topic or concept to research. Their input is passed through a series of **AI Agents**, each with its own role, instructions on which **LLM** to use, and the **expected output format**:
 
 1. `input_guardrail`: 
 
