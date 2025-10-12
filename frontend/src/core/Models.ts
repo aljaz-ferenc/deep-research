@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const querySchema = z.string().min(3, {
-	message: "Please ender at least 3 characters.",
+	message: "Please enter at least 3 characters.",
 });
 
 export type Query = z.infer<typeof querySchema>;
