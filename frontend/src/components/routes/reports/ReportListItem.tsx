@@ -33,9 +33,10 @@ export default function ReportListItem({ report }: ReportListItemProps) {
 					<Link
 						to={`/reports/${report._id}`}
 						type="button"
-						className={buttonVariants({ intent: "outline" })}
+						className={cn([buttonVariants({ intent: "outline" }), 'w-max flex items-center gap-1'])}
 					>
-						<span>View Report</span>
+						<span className='hidden md:inline'>View Report</span>
+						<span className='md:hidden'>View</span>
 						<ArrowRight size={15} />
 					</Link>
 				</div>

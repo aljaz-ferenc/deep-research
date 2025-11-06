@@ -12,11 +12,11 @@ export default function Header() {
 						<div className="text-primary size-7">
 							<img src="logo.png" alt="" />
 						</div>
-						<h1 className="text-xl font-bold text-gray-900 dark:text-white">
+						<h1 className="text-xl font-bold text-gray-900 dark:text-white hidden md:inline">
 							Deep Research
 						</h1>
 					</div>
-					<nav className="hidden md:flex items-center gap-8">
+					<nav className="flex items-center gap-8">
 						<div className="flex items-center gap-4">
 							<NavLink
 								to="/"

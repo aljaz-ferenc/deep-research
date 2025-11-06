@@ -27,7 +27,7 @@ export default function SingleReportRoute() {
 	}
 
 	return (
-		<main className="flex-grow justify-center py-8">
+		<main className="flex-grow justify-center py-8 overflow-x-hidden">
 			<div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 prose prose-invert">
 				<div ref={reportRef}>
 					<Markdown
