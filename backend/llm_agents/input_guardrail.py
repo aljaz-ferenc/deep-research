@@ -1,4 +1,3 @@
-from multiprocessing import context
 from utils.utils import update_status
 from models import CustomEvents, Statuses
 from pydantic import BaseModel

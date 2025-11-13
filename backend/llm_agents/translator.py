@@ -28,4 +28,4 @@ async def run_translator(language: str, report: str):
         return result.final_output
     except Exception as e:
         print(f"{translator.model.model} error: {str(e)}")
-        raise Exception(f"Error translating report...")
+        raise Exception("Error translating report...")

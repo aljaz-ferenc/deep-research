@@ -56,4 +56,4 @@ async def run_queires_generator(original_query: str, context=None):
         return output
     except Exception as e:
         print(f"{queries_generator.model.model} error: {str(e)}")
-        raise Exception(f"Error generating queries...")
+        raise Exception("Error generating queries...")
