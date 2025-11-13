@@ -17,11 +17,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import ORIGIN_URL
 from app.core.database import reports_collection
 from app.routers import reports
+from app.core.utils import check_daily_limit, update_status
 
 load_dotenv()
-
-DAILY_LIMIT = 3
-
 
 sio = socketio.AsyncServer(
     async_mode="asgi", cors_allowed_origins=[ORIGIN_URL]
@@ -42,36 +40,10 @@ socket_app = socketio.ASGIApp(sio, socketio_path="/ws/socket.io")
 app.mount("/ws", socket_app)
 
 
-async def check_daily_limit(sid: str) -> bool:
-    now = datetime.now(timezone.utc)
-    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    try:
-        count_today = reports_collection.count_documents({"createdAt": {"$gte": start_of_day}})
-        if count_today >= DAILY_LIMIT:
-            await sio.emit(
-                CustomEvents.ERROR.value,
-                {"error": "Daily report limit reached"},
-                namespace="/ws",
-                to=sid
-            )
-            return False
-        return True
-    except Exception:
-        await sio.emit(
-            CustomEvents.ERROR.value,
-            {"error": "Could not get report count"},
-            namespace="/ws",
-            to=sid
-        )
-        return False
-
-
-
-
 @sio.on("connect", namespace="/ws")
 async def connect(sid, environ):
     print(f"Client connected to /ws namespace: {sid}")
-    await update_status(Statuses.READY, sid, "")
+    await update_status(sio, Statuses.READY, sid, "")
 
 
 @sio.on("disconnect", namespace="/ws")
@@ -79,19 +51,13 @@ async def disconnect(sid):
     print(f"Client disconnected from /ws namespace: {sid}")
 
 
-async def update_status(status: Statuses, sid: str, model: str):
-    await sio.emit(
-        CustomEvents.STATUS_UPDATE.value,
-        {"status": status.value, "model": model},
-        namespace="/ws",
-        to=sid,
-    )
+
 
 
 @sio.on(CustomEvents.QUERY.value, namespace="/ws")
 async def start_research(sid, query, language="English"):
 
-    if not await check_daily_limit(sid):
+    if not await check_daily_limit(sio, sid):
         return
 
     try:
@@ -99,7 +65,7 @@ async def start_research(sid, query, language="English"):
             ctx = {"sid": sid, "sio":sio}
             
             # generate queries
-            await update_status(
+            await update_status(sio,
                 Statuses.VERIFYING_INPUT, sid, queries_generator.model.model
             )
             queries_output = await run_queires_generator(query, context=ctx)
