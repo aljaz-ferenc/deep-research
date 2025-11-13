@@ -52,7 +52,7 @@ async def start_research(sid, query, language="English"):
             )
 
             # #search web for links
-            await update_status(Statuses.SEARCHING_WEB, sid, web_searcher.model)
+            await update_status(sio, Statuses.SEARCHING_WEB, sid, web_searcher.model)
             urls = await run_web_search(queries_output.explanation, queries_output)
             await sio.emit(
                 CustomEvents.URLS_GENERATED.value,
@@ -62,12 +62,12 @@ async def start_research(sid, query, language="English"):
             )
 
             # scrape links for data
-            await update_status(Statuses.SCRAPING_DATA, sid, scraper.model)
+            await update_status(sio, Statuses.SCRAPING_DATA, sid, scraper.model)
             summaries = await run_scraper(query, urls)
 
             # build report
             await update_status(
-                Statuses.GENERATING_REPORT, sid, report_builder.model.model
+                sio, Statuses.GENERATING_REPORT, sid, report_builder.model.model
             )
             report = await run_builder(query, summaries)
 
@@ -79,7 +79,7 @@ async def start_research(sid, query, language="English"):
             report_doc["createdAt"] = datetime.now(timezone.utc)
             result = reports_collection.insert_one(report_doc)
 
-            await update_status(Statuses.COMPLETE, sid, "")
+            await update_status(sio, Statuses.COMPLETE, sid, "")
             await sio.emit(
                 CustomEvents.REPORT_GENERATED.value,
                 {"reportId": str(result.inserted_id)},
