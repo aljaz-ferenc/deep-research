@@ -3,11 +3,11 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 from bson import ObjectId
 from app.core.database import reports_collection
+from app.core.config import DAILY_LIMIT
 
 
 load_dotenv()
 
-DAILY_LIMIT = 3
 
 router = APIRouter(prefix='/api/v1/reports', tags=['Reports'])
 
