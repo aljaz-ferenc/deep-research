@@ -1,4 +1,4 @@
-from agents import Agent, function_tool, Runner, trace
+from agents import Agent, function_tool, Runner
 from bs4 import BeautifulSoup
 import requests
 
@@ -66,4 +66,4 @@ async def run_scraper(original_query: str, urls):
         return summaries
     except Exception as e:
         print(f"{scraper.model} error: {str(e)}")
-        raise Exception(f"Error scraping data...")
+        raise Exception("Error scraping data...")

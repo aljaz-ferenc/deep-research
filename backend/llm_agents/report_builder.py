@@ -2,9 +2,7 @@ from agents import Agent, Runner
 from agents.extensions.models.litellm_model import LitellmModel
 import os
 from pydantic import BaseModel, Field
-
-
-WORD_COUNT = int(os.getenv("REPORT_WORD_COUNT"))
+from app.core.config import REPORT_WORD_COUNT
 
 class Report(BaseModel):
     markdown: str = Field(description="The final report content in markdown format.")
@@ -16,7 +14,7 @@ instructions = (
     "by combining the information from the search results into a coherent whole. "
     "The report should be well-structured, informative, and directly answer the original query. "
     "Focus on providing actionable insights and practical information. "
-    f"Aim for up to {WORD_COUNT} words with clear sections and a conclusion. "
+    f"Aim for up to {REPORT_WORD_COUNT} words with clear sections and a conclusion. "
     "IMPORTANT: Return your response as JSON in the following format exactly:\n"
     "{\n"
     '  "title": "A concise title for the report",\n'

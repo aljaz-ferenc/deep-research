@@ -1,7 +1,7 @@
 from agents import Agent, WebSearchTool
 from llm_agents.queries_generator import GeneratedQueriesOutput
 from pydantic import BaseModel
-from agents import Runner, trace
+from agents import Runner
 import os
 
 
@@ -53,4 +53,4 @@ async def run_web_search(explanation: str, queries: GeneratedQueriesOutput):
         return urls
     except Exception as e:
         print(f"{web_searcher.model} error: {str(e)}")
-        raise Exception(f"Error searching the web...")
+        raise Exception("Error searching the web...")

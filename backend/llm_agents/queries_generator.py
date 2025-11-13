@@ -3,7 +3,7 @@ import os
 from llm_agents.input_guardrail import input_guardrail_function
 from pydantic import BaseModel, Field
 from agents.extensions.models.litellm_model import LitellmModel
-
+from app.core.config import NUM_OF_QUERIES
 
 class GeneratedQuery(BaseModel):
     query: str
@@ -15,16 +15,14 @@ class GeneratedQueriesOutput(BaseModel):
     explanation: str = Field(description="A short description of the queries or explanation of why they were selected and what topics they touch on.")
 
 
-number_of_queries = int(os.getenv("NUM_OF_QUERIES"))
-
 instructions = (
-    f"Generate {number_of_queries} distinct, well-formed, insightful research queries based on the user’s original input. "
+    f"Generate {NUM_OF_QUERIES} distinct, well-formed, insightful research queries based on the user’s original input. "
     "The queries should explore the topic deeply from multiple relevant angles. "
     "Provide a brief explanation of your reasoning in 1–2 sentences. "
     "The explanation should summarize the main topics, themes, or areas that the queries cover and why they are important for understanding the research topic. "
     "Do NOT explain each query individually."
     "Each query in the output list must be phrased as a clear, precise question or search term. "
-    f"Output: A list of exactly {number_of_queries} queries. Each query object should contain two fields: 'query' (the query in the form of a question) and 'id' (its index). "
+    f"Output: A list of exactly {NUM_OF_QUERIES} queries. Each query object should contain two fields: 'query' (the query in the form of a question) and 'id' (its index). "
     "Quality & Style: Each query should be clear and unambiguous. Cover diverse subtopics or related aspects of the original query. Avoid trivial or overly broad queries. "
     "Use relevant technical terms or domain-specific language if applicable. Include different perspectives or angles, e.g., causes, effects, history, comparisons, applications, controversies, recent developments. "
     "Examples: If input is 'climate change effects', output queries might include: "
@@ -56,4 +54,4 @@ async def run_queires_generator(original_query: str, context=None):
         return output
     except Exception as e:
         print(f"{queries_generator.model.model} error: {str(e)}")
-        raise Exception(f"Error generating queries...")
+        raise Exception("Error generating queries...")
