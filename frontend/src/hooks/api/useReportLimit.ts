@@ -14,7 +14,6 @@ async function fetchReportLimit() {
 		throw new Error("Could not get report limit.");
 	}
 	const data = await res.json();
-	console.log(data);
 	return data;
 }
 
