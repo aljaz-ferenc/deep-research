@@ -26,7 +26,7 @@ if (!BASE_URL) {
 
 export const WebSocketContext = createContext<Socket | null>(null);
 
-const socket = io("http://localhost:8000", {
+const socket = io(BASE_URL, {
     path: "/ws/socket.io",
     transports: ["websocket", "polling"],
 });
