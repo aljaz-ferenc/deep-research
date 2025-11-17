@@ -10,7 +10,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[ORIGIN_URL],
+    allow_origins=["https://af-deep-research.netlify.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

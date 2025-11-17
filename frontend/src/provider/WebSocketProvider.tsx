@@ -15,10 +15,9 @@ import {
 } from "@/core/Models";
 import { useResearchState } from "@/state/research.state";
 
-const BASE_URL =
-	process.env.NODE_ENV === "development"
-		? import.meta.env.VITE_BASE_URL_DEV
-		: import.meta.env.VITE_BASE_URL;
+const BASE_URL = process.env.NODE_ENV === "development"
+    ? "http://localhost:8000"
+    : "https://deep-research.app.aljazferenc.dev";
 
 if (!BASE_URL) {
 	console.error("BASE_URL environment variable missing");

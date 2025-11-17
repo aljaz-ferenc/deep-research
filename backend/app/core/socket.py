@@ -4,7 +4,7 @@ from .config import ORIGIN_URL
 
 sio = socketio.AsyncServer(
     async_mode='asgi',
-    cors_allowed_origins="*", 
+    cors_allowed_origins=["https://af-deep-research.netlify.app"], 
     logger=True,
     engineio_logger=True  
 )
