@@ -14,18 +14,18 @@ from app.core.utils import check_daily_limit, update_status
 from app.core.socket import sio
 
 
-@sio.on("connect", namespace="/ws")
+@sio.on("connect")
 async def connect(sid, environ):
     print(f"Client connected to /ws namespace: {sid}")
     await update_status(sio, Statuses.READY, sid, "")
 
 
-@sio.on("disconnect", namespace="/ws")
+@sio.on("disconnect")
 async def disconnect(sid):
     print(f"Client disconnected from /ws namespace: {sid}")
 
 
-@sio.on(CustomEvents.QUERY.value, namespace="/ws")
+@sio.on(CustomEvents.QUERY.value)
 async def start_research(sid, query, language="English"):
     if not await check_daily_limit(sio, sid):
         return
@@ -47,7 +47,6 @@ async def start_research(sid, query, language="English"):
                         "explanation": queries_output.explanation,
                     }
                 },
-                namespace="/ws",
                 to=sid,
             )
 
@@ -57,7 +56,6 @@ async def start_research(sid, query, language="English"):
             await sio.emit(
                 CustomEvents.URLS_GENERATED.value,
                 {"searchResults": urls},
-                namespace="/ws",
                 to=sid,
             )
 
@@ -83,7 +81,6 @@ async def start_research(sid, query, language="English"):
             await sio.emit(
                 CustomEvents.REPORT_GENERATED.value,
                 {"reportId": str(result.inserted_id)},
-                namespace="/ws",
                 to=sid,
             )
     except Exception as e:
@@ -95,5 +92,5 @@ async def start_research(sid, query, language="English"):
             error = "Rate limit reached for gpt-4o-mini. Plaease wait and try again."
 
         await sio.emit(
-            CustomEvents.ERROR.value, {"error": error}, namespace="/ws", to=sid
+            CustomEvents.ERROR.value, {"error": error}, to=sid
         )

@@ -26,9 +26,9 @@ if (!BASE_URL) {
 
 export const WebSocketContext = createContext<Socket | null>(null);
 
-const socket = io(`${BASE_URL}/ws`, {
-	path: "/ws/socket.io",
-	transports: ["websocket", "polling"],
+const socket = io("http://localhost:8000", {
+    path: "/ws/socket.io",
+    transports: ["websocket", "polling"],
 });
 
 export default function WebSocketProvider({ children }: PropsWithChildren) {

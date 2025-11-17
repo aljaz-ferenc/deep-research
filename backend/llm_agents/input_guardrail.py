@@ -60,7 +60,6 @@ async def input_guardrail_function(ctx: RunContextWrapper[None], agent: Agent, i
             "is_input_valid": result.final_output.is_input_valid,
             "reasoning": result.final_output.reasoning
         }, 
-        namespace='/ws',
         to=sid
         )
 

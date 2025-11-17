@@ -12,7 +12,6 @@ async def check_daily_limit(sio, sid: str) -> bool:
             await sio.emit(
                 CustomEvents.ERROR.value,
                 {"error": "Daily report limit reached"},
-                namespace="/ws",
                 to=sid
             )
             return False
@@ -21,7 +20,6 @@ async def check_daily_limit(sio, sid: str) -> bool:
         await sio.emit(
             CustomEvents.ERROR.value,
             {"error": "Could not get report count"},
-            namespace="/ws",
             to=sid
         )
         return False
@@ -31,6 +29,5 @@ async def update_status(sio, status: Statuses, sid: str, model: str):
     await sio.emit(
         CustomEvents.STATUS_UPDATE.value,
         {"status": status.value, "model": model},
-        namespace="/ws",
         to=sid,
     )
