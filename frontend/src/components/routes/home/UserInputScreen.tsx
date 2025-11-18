@@ -24,7 +24,7 @@ const startResearchFormSchema = z.object({
 export default function UserInputScreen() {
 	const socket = use(WebSocketContext);
 	const { resetStore } = useResearchState(useShallow((state) => state));
-	const { data, error } = useReportLimit();
+	const { data } = useReportLimit();
 
 	const startResearchForm = useForm<z.infer<typeof startResearchFormSchema>>({
 		resolver: zodResolver(startResearchFormSchema),
